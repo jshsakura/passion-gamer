@@ -1,0 +1,2 @@
+DEBUG:root:save_settings directory:C:/Users/GPD/Desktop/ROMS
+DEBUG:root:save_settings thread:1
