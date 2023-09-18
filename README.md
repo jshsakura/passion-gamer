@@ -75,3 +75,12 @@
 - 한글 목록으로 변환 이후 영문 키보드만 지원하는 덕에 검색이 불가능해지거나 기존 게임의 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 가 동작하지 않습니다.
 
 이 경우 직접 수정이 필요하니 위 링크를 참고해 Resource 폴더의 `xfgle.hgp` 파일을 교체하거나 수정해주셔야합니다.
+
+<br/>
+
+## 💌 무한한 감사를 드립니다. 🫶
+
+- 프로그램 내 버튼 아이콘은 멋진 무료 아이콘을 제공하는 [Feather](https://feathericons.com/)를 이용합니다.
+- 윈도우 프로그램의 아이콘은 [svgrepo](https://www.svgrepo.com/)에서 무료 아이콘을 사용했습니다.
+- 프로그램의 로딩 오버레이 아이콘은 [loading.io](https://loading.io) 에서 무료 `svg` 아이콘을 이용하고 있습니다.
+- 친절한 도우미, 의외로 멍청한 [ChatGPT](https://chat.openai.com/)의 코드 리팩토링 서포트.
