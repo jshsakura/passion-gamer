@@ -30,7 +30,7 @@ class Gui:
 
         font_database = QFontDatabase()
         font_id = font_database.addApplicationFont(
-            absp("fonts/NanumGothic.ttf"))
+            absp("res/fonts/NanumGothic.ttf"))
         if font_id == -1:
             logging.debug("Font load failed!")
         else:
