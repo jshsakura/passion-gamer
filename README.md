@@ -84,7 +84,7 @@
 
 이 경우 직접 수정이 필요합니다.
 
-위 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date)를 참고해 `SF2000`의 SD 카드 안에 `Resource` 폴더의 `xfgle.hgp` 파일을 교체하거나 수정해주셔야합니다.
+무적풍화륜님의 네이버 소통카페 측 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 수정 방법을 참고해 `SF2000`의 SD 카드 안에 `Resource` 폴더의 `xfgle.hgp` 파일을 교체하거나 수정해주셔야합니다.
 
 <br/>
 
@@ -93,5 +93,5 @@
 - 프로그램 내 버튼 아이콘은 멋진 무료 아이콘을 제공하는 [Feather](https://feathericons.com/)를 이용합니다.
 - 윈도우 프로그램의 아이콘은 [svgrepo](https://www.svgrepo.com/)에서 무료 아이콘을 사용했습니다.
 - 프로그램의 로딩 오버레이 아이콘은 [loading.io](https://loading.io) 에서 무료 `svg` 아이콘을 이용하고 있습니다.
-- 기종별 아이콘은 `Onion OS`의 [Dot-art by Yoshi-kun](https://github.com/OnionUI/Themes)
+- 기종별 아이콘은 `Onion OS`의 [Dot-art by Yoshi-kun](https://github.com/OnionUI/Themes) 를 적용했습니다.
 - 친절한 도우미, 의외로 멍청한 [ChatGPT](https://chat.openai.com/)의 코드 리팩토링 서포트.
