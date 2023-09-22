@@ -1,5 +1,8 @@
+import logging
 import os
 from PyQt5.QtCore import QRunnable, pyqtSignal, QObject
+
+from core.gui.helpers import get_platform_name
 
 
 class RomScannerWorkerSignals(QObject):
@@ -38,13 +41,19 @@ class RomScannerWorker(QRunnable):
             for rom in roms_list:
                 # 원본 파일명과 변경될 파일명을 비교
                 if rom['origin_filename'] != rom['new_filename'] and rom['new_filename']:
-                    # 파일명 변경
-                    old_path = rom['file_path']
-                    directory, old_filename_with_ext = os.path.split(old_path)
-                    new_filename_with_ext = rom['new_filename'] + \
-                        os.path.splitext(old_filename_with_ext)[-1]
-                    new_path = os.path.join(directory, new_filename_with_ext)
-                    os.rename(old_path, new_path)
+                    if get_platform_name(rom['file_path']) == 'ARCADE':
+                        logging.debug('아케이드 준비 중')
+
+                    else:
+                        # 단순 파일명 변경
+                        old_path = rom['file_path']
+                        directory, old_filename_with_ext = os.path.split(
+                            old_path)
+                        new_filename_with_ext = str(rom['new_filename']).replace('\n', '') + \
+                            os.path.splitext(old_filename_with_ext)[-1]
+                        new_path = os.path.join(
+                            directory, new_filename_with_ext)
+                        os.rename(old_path, new_path)
 
             self.signals.renameCompleted.emit()
 

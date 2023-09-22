@@ -2,3 +2,4 @@
 PyQt5==5.15.9
 PyQt5_sip==12.12.2
 qdarktheme
+Pillow>=10.0.0

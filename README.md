@@ -28,6 +28,14 @@
 </p>
 
 - `롬 폴더 검색` 버튼을 누르고 잠시 기다려줍니다.
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer3-1.png?raw=true"></img>
+</p>
+
+- `롬 파일` 갯수가 무려 `6,000`개가 넘어가기 때문에 프로그램이 멈춘 것처럼 보일 수 있습니다.
+
+향후 `UI`측을 최적화할 예정이니 일단은 잠시 인내심을 가지고 기다려주세요.
 
 <br/>
 <p align="center">
@@ -74,7 +82,9 @@
 - 본 프로그램은 롬 파일 명을 직접 변경하기 때문에, 아무쪼록 사용에 주의가 필요합니다.
 - 한글 목록으로 변환 이후 영문 키보드만 지원하는 덕에 검색이 불가능해지거나 기존 게임의 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 가 동작하지 않습니다.
 
-이 경우 직접 수정이 필요하니 위 링크를 참고해 Resource 폴더의 `xfgle.hgp` 파일을 교체하거나 수정해주셔야합니다.
+이 경우 직접 수정이 필요합니다.
+
+위 링크를 참고해 `SF2000`의 SD 카드 안에 `Resource` 폴더의 `xfgle.hgp` 파일을 교체하거나 수정해주셔야합니다.
 
 <br/>
 

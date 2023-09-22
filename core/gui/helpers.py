@@ -157,8 +157,13 @@ def set_settings(key, value):
     conn.close()
 
 
-def get_file_name(path: str) -> str:
-    return os.path.basename(path)
+def get_file_name(file_path: str) -> str:
+    return os.path.basename(file_path)
+
+
+def get_file_extension(file_path: str) -> str:
+    _, extension = os.path.splitext(file_path)
+    return extension
 
 
 def get_file_name_without_extension(file_path):

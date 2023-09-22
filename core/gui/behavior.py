@@ -1,12 +1,13 @@
 import os
 import logging
-import PyQt5
+from pathlib import Path
+from .frogtool import zxx_ext
 
-from PyQt5.QtCore import Qt, QThreadPool
+from PyQt5.QtCore import Qt, QThreadPool, QSize
 from core.gui.worker import RomScannerWorker
 from .helpers import *
 from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
-from PyQt5.QtGui import QStandardItem, QColor
+from PyQt5.QtGui import QStandardItem, QImage, QIcon, QPixmap
 
 
 class GuiBehavior:
@@ -42,8 +43,8 @@ class GuiBehavior:
             self.worker_thread.setMaxThreadCount(int(default_thread))
             settings.append(int(default_thread))
         else:
-            self.worker_thread.setMaxThreadCount(1)
-            settings.append(1)
+            self.worker_thread.setMaxThreadCount(4)
+            settings.append(4)
         self.settings = settings
 
     def show_loading_overlay(self):
@@ -63,9 +64,12 @@ class GuiBehavior:
     def get_roms_list(self):
         # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
         roms_folder = get_settings('directory')
+        # if roms_folder and not roms_folder in 'ROMS':
+        #     roms_folder = os.path.normpath(roms_folder+'/ROMS')
         roms_list = []
         # 검색할 platform_name 값들
-        target_platforms = ['FC', 'GB', 'GBA', 'GBC', 'MD', 'SFC']
+        target_platforms = ['FC', 'GB', 'GBA', 'GBC',
+                            'MD', 'SFC']  # 'ARCADE'는 드라이브 경로 지정 필요
 
         if roms_folder:
             for root, dirs, files in os.walk(roms_folder):
@@ -84,8 +88,19 @@ class GuiBehavior:
 
                     # logging.debug('file_extension: '+str(file_extension))
                     if '.z' in file_extension and platform_name in target_platforms:
+                        # 썸네일 설정
+                        thumbnail = self.get_thumbnail(
+                            platform_name, rom_path, True)
+
+                        # 콘솔 아이콘 설정
+                        platform_icon = self.get_platform_icon(platform_name)
+
+                        # 원본 파일명 설정
+                        file_size = self.get_filesize(
+                            os.path.getsize(rom_path))
+
                         roms_list.append({"file_path": rom_path, "platform_name": platform_name, "origin_filename": origin_filename,
-                                         "new_filename": new_filename, "status": status})
+                                         "new_filename": new_filename, "status": status, "file_size": file_size, "thumbnail": thumbnail, "platform_icon": platform_icon})
         else:
             alert('설정하신 롬 파일 경로가 없습니다.')
 
@@ -96,28 +111,68 @@ class GuiBehavior:
 
         for row, rom in enumerate(roms_list):
             # logging.debug(rom)
+            platform_name = rom['platform_name']
+            platform_icon = rom['platform_icon']
+            file_path = os.path.normpath(rom['file_path'])
+            thumbnail = rom['thumbnail']
+            file_size = rom['file_size']
+
+            # 행 높이 수정, 아이콘 사이즈 수정
+            self.gui.table.setRowHeight(row, 58)
+            self.gui.table.setIconSize(QSize(50, 58))
+
+            # 플랫폼 아이콘 설정
+            if platform_icon:
+                platform_icon_item = QStandardItem()
+                platform_icon_item.setIcon(platform_icon)
+                platform_icon_item.setFlags(platform_icon_item.flags(
+                ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                platform_icon_item.setTextAlignment(
+                    Qt.AlignVCenter | Qt.AlignCenter)
+                self.gui.table_model.setItem(row, 0, platform_icon_item)
 
             # 플랫폼 설정
-            platform_name_item = QStandardItem(rom['platform_name'])
+            platform_name_item = QStandardItem()
+            platform_name_item.setText(platform_name)
+            # 텍스트 좌측 정렬
+            platform_name_item.setTextAlignment(
+                Qt.AlignVCenter | Qt.AlignCenter)
+
             platform_name_item.setFlags(platform_name_item.flags(
             ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            self.gui.table_model.setItem(row, 0, platform_name_item)
+            self.gui.table_model.setItem(row, 1, platform_name_item)
+
+            # 썸네일 설정
+            if thumbnail:
+                thumbnail_item = QStandardItem()
+                thumbnail_item.setIcon(thumbnail)
+
+                thumbnail_item.setFlags(thumbnail_item.flags(
+                ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                self.gui.table_model.setItem(row, 2, thumbnail_item)
 
             # 파일 경로 설정
-            file_path_item = QStandardItem(rom['file_path'])
+            file_path_item = QStandardItem(file_path)
             file_path_item.setFlags(file_path_item.flags(
             ) & ~Qt.ItemIsEditable | Qt.ItemIsEnabled)
-            self.gui.table_model.setItem(row, 1, file_path_item)
+            self.gui.table_model.setItem(row, 3, file_path_item)
+
+            # 원본 파일 용량 설정
+            filesize_item = QStandardItem(file_size)
+            filesize_item.setFlags(filesize_item.flags(
+            ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            filesize_item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
+            self.gui.table_model.setItem(row, 4, filesize_item)
 
             # 원본 파일명 설정
             origin_filename_item = QStandardItem(rom['origin_filename'])
             origin_filename_item.setFlags(origin_filename_item.flags(
             ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            self.gui.table_model.setItem(row, 2, origin_filename_item)
+            self.gui.table_model.setItem(row, 5, origin_filename_item)
 
             # 변경될 파일명 설정
             new_filename_item = QStandardItem(rom['new_filename'])
-            self.gui.table_model.setItem(row, 3, new_filename_item)
+            self.gui.table_model.setItem(row, 6, new_filename_item)
             # Check if new_filename is empty and set the row background color to red
 
     def roms_scan(self):
@@ -178,7 +233,7 @@ class GuiBehavior:
         selected_rows = self.get_selected_rows()
         if not selected_rows:
             # 선택된 행이 없으면 경고 메시지를 표시하고 반환합니다.
-            alert('화면의 목록에서 제외할 롬 파일을 선택하세요.')
+            alert('목록에서 제외할 롬 파일을 선택하세요.')
             return
 
         if self.ask_for_delete_confirmation():
@@ -255,3 +310,52 @@ class GuiBehavior:
     def handle_exit(self):
         # 종료시 동작 기술
         os._exit(1)
+
+    def get_filesize(self, filesize):
+        humanReadableFileSize = "ERROR"
+        if filesize > 1024*1024:  # More than 1 Megabyte
+            humanReadableFileSize = f"{round(filesize/(1024*1024),2)} MB"
+        elif filesize > 1024:  # More than 1 Kilobyte
+            humanReadableFileSize = f"{round(filesize/1024,2)} KB"
+        else:  # Less than 1 Kilobyte
+            humanReadableFileSize = f"filesize Bytes"
+        return humanReadableFileSize
+
+    def get_thumbnail(self, platform, filepath, is_scale):
+        thumbnail = None
+        extension = get_file_extension(filepath)
+        sys_zxx_ext = '.' + zxx_ext[platform]
+
+        if extension == sys_zxx_ext:
+            original_width = 144
+            original_height = 208
+
+            with open(filepath, "rb") as rom_file:
+                rom_content = bytearray(rom_file.read(
+                    original_width * original_height * 2))
+
+            img = QImage(rom_content, original_width,
+                         original_height, QImage.Format_RGB16)
+
+            # Scale down the image
+            if is_scale:
+                pimg = QPixmap.fromImage(img).scaled(
+                    72, 104, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            else:
+                pimg = QPixmap.fromImage(img).scaled(
+                    original_width, original_height, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            icon = QIcon(pimg)
+            return icon
+
+        return thumbnail
+
+    def get_platform_icon(self, platform):
+        icon_path = absp(f'res/icon/{platform}.png')
+        # 파일이 존재하는지 확인
+        if os.path.exists(icon_path):
+            size = QSize(32, 32)
+            icon = QIcon(icon_path)
+            pixmap = icon.pixmap(size)
+            return QIcon(pixmap)
+        else:
+            return None  # 또는 기본 아이콘을 반환할 수 있습니다.
