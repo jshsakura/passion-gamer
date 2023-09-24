@@ -1,7 +1,7 @@
 **🧙‍♂️ Retro Passion Gamer 프로젝트.**
 
 <p align="left">
-  <img src="https://github.com/jshsakura/passion-gamer/blob/master/core/gui/res/icon/ico.png?raw=true" style="width:200px;"></img>
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/core/gui/res/icon/ico.png?raw=true" style="width:100px;"></img>
 </p>
 
 간단하게 윈도우에서 설치 없이 `exe` 파일로 실행이 가능한 `SF2000 롬 파일명 일괄 수정` 프로그램입니다.
