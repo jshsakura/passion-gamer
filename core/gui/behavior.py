@@ -465,7 +465,6 @@ class GuiBehavior:
         work_flag = False
         for index, rom in enumerate(self.all_roms_list):
             if rom['file_path'] == file_path:
-                # logging.debug(f'파일경로 {index} 발견!')
                 # 조건에 해당하는 항목을 찾았으므로 삭제합니다.
                 if action == 'remove':
                     self.all_roms_list[index]['status'] = '4'

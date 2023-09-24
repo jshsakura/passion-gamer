@@ -81,10 +81,6 @@ class RomScannerWorker(QRunnable):
                         new_file_path = os.path.normpath(os.path.join(
                             directory, rom['new_filename']+'.zfb'))
                         if not os.path.exists(new_file_path):
-                            if rom['new_filename'] == '대마계촌 - 구울 앤 고스트':
-                                print(arcade_file_path)
-                                print(new_file_path)
-                                print(local_file_path)
                             # ARCADE 경로의 파일을 삭제
                             if os.path.exists(arcade_file_path):
                                 # ARCADE 경로의 파일을 새 파일명으로 이동
