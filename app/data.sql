@@ -6072,7 +6072,7 @@ INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) V
 INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) VALUES ('ARCADE', 'Garou -Mark of the Wolves', '아랑 - 가로우 - 늑대의 증표');
 INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) VALUES ('ARCADE', 'Ghost Pilots', '고스트 파일럿');
 INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) VALUES ('ARCADE', 'Ghostlop', '고스트럽');
-INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) VALUES ('ARCADE', 'Ghouls''n Ghosts', '대마계촌 - 구울 앤 고스트');
+INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) VALUES ('ARCADE', 'Ghouls''n Ghosts', '대마계촌');
 INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) VALUES ('ARCADE', 'Giga Wing', '기가 윙');
 INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) VALUES ('ARCADE', 'Goal! Goal! Goal!', '골! 골! 골!');
 INSERT OR REPLACE INTO gamelists (platform_name, origin_filename, kr_filename) VALUES ('ARCADE', 'Gogetsuji Legends', '호혈사 일족 최강전설');

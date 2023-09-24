@@ -72,13 +72,25 @@ class RomScannerWorker(QRunnable):
                     if get_platform_name(rom['file_path']) == 'ARCADE':
                         # ARCADE 게임 경로
                         arcade_file_path = rom['file_path']
+                        directory, filename = os.path.split(arcade_file_path)
+
                         # 새 파일 경로
-                        new_file_path = absp(
+                        local_file_path = absp(
                             f"res/data/zfb/{rom['new_filename']}.zfb")
-                        if os.path.exists(new_file_path):
-                            # ARCADE 경로의 파일을 새 파일명으로 이동
-                            shutil.move(new_file_path, arcade_file_path)
-                            # os.remove(arcade_file_path)
+                        # 파일명 변경
+                        new_file_path = os.path.normpath(os.path.join(
+                            directory, rom['new_filename']+'.zfb'))
+                        if not os.path.exists(new_file_path):
+                            if rom['new_filename'] == '대마계촌 - 구울 앤 고스트':
+                                print(arcade_file_path)
+                                print(new_file_path)
+                                print(local_file_path)
+                            # ARCADE 경로의 파일을 삭제
+                            if os.path.exists(arcade_file_path):
+                                # ARCADE 경로의 파일을 새 파일명으로 이동
+                                shutil.copy(local_file_path, new_file_path)
+                                # 불필요한 원본파일은 삭제
+                                os.remove(arcade_file_path)
 
                     else:
                         # 단순 파일명 변경
