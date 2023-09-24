@@ -220,7 +220,7 @@ class Gui:
         self.main.loading_overlay = LoadingOverlay(self.main)
         # LoadingOverlay 클래스를 부모 위젯에 추가한 후 이벤트 필터를 설치
         # self.main.setCentralWidget(widget)
-        self.main.loading_overlay.installEventFilter(self.main)
+        self.main.installEventFilter(self.main.loading_overlay)
 
         # 메뉴바 생성
         # menubar = self.main.menuBar()
@@ -480,7 +480,7 @@ class Gui:
 class LoadingOverlay(QWidget):
     def __init__(self, parent):
         super().__init__(parent)
-        self.setStyleSheet("background-color: rgba(255, 255, 255, 0.6);")
+        self.setStyleSheet("background-color: rgba(255, 255, 255, 0.1);")
         self.setWindowFlags(Qt.FramelessWindowHint)
         # SVG 이미지를 로딩 오버레이 위젯에 추가
         svg_widget = QSvgWidget(absp('res/icon/loading_image.svg'))
@@ -489,6 +489,7 @@ class LoadingOverlay(QWidget):
         svg_layout.addWidget(svg_widget)
         svg_layout.setAlignment(Qt.AlignCenter)
         self.setGeometry(0, 0, self.parent().width(), self.parent().height())
+        self.resize(parent.size())
         self.hide()
 
     def resizeEvent(self, event):

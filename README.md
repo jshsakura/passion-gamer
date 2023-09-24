@@ -48,7 +48,7 @@
 
 - 만약 조회된 목록에서 롬 파일 명을 확인하고 누락된 건이 있다면 입력해줍니다.
 - 사전 입력된 한글 롬파일 목록은 무적풍화륜 소통카페의 `삼색이냥`님이 고생해주셨습니다. (너무나 감사합니다.)
-- 전체 한글 롬 파일 목록은 [구글 독스](https://docs.google.com/spreadsheets/d/1TCoolDlFeeaH3LgBsC6shHvN7u_Tk5liIAX56BhsfSs/edit#gid=0)에서 확인이 가능합니다.
+- 전체 한글 롬 파일명 목록은 [구글 독스](https://docs.google.com/spreadsheets/d/1TCoolDlFeeaH3LgBsC6shHvN7u_Tk5liIAX56BhsfSs/edit?usp=sharing)에서 확인이 가능합니다.
 
 <br/>
 <p align="center">
