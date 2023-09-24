@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 
+from core.gui.helpers import database_init
+
 # SQLite 데이터베이스에 연결
 conn = sqlite3.connect('app/local.db')
+
+# SQLite 데이터베이스 생성 (초기화)
+database_init()
 
 try:
     # 커서 생성

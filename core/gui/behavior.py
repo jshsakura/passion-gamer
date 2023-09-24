@@ -89,8 +89,8 @@ class GuiBehavior:
         #     roms_folder = os.path.normpath(roms_folder+'/ROMS')
         roms_list = []
         # 검색할 platform_name 값들
-        target_platforms = ['FC', 'GB', 'GBA', 'GBC',
-                            'MD', 'SFC']  # 'ARCADE'는 드라이브 경로 지정 필요
+        target_platforms = ['ARCADE', 'FC', 'GB', 'GBA', 'GBC',
+                            'MD', 'SFC']  # 'ARCADE'는 zfb 교체
 
         if roms_folder:
             for root, dirs, files in os.walk(roms_folder):
@@ -270,7 +270,13 @@ class GuiBehavior:
             # 변경될 파일명 설정
             new_filename_item = QStandardItem(new_filename)
             self.gui.table_model.setItem(row, 8, new_filename_item)
-            # Check if new_filename is empty and set the row background color to red
+            if platform_name == 'ARCADE':
+                new_filename_item.setFlags(origin_filename_item.flags(
+                ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                new_filename_item.setForeground(QColor(26, 26, 26))
+                italic_font = self.gui.font
+                italic_font.setItalic(True)
+                new_filename_item.setFont(italic_font)
 
             # 행 높이 수정, 아이콘 사이즈 수정
             self.gui.table.setRowHeight(row, 58)

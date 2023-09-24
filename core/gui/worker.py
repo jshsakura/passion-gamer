@@ -1,8 +1,9 @@
 import logging
 import os
+import shutil
 from PyQt5.QtCore import QRunnable, pyqtSignal, QObject
 
-from core.gui.helpers import get_platform_name
+from core.gui.helpers import get_platform_name, absp
 
 
 class RomScannerWorkerSignals(QObject):
@@ -69,7 +70,15 @@ class RomScannerWorker(QRunnable):
                 # 원본 파일명과 변경될 파일명을 비교
                 if rom['origin_filename'] != rom['new_filename'] and rom['new_filename']:
                     if get_platform_name(rom['file_path']) == 'ARCADE':
-                        logging.debug('아케이드 준비 중')
+                        # ARCADE 게임 경로
+                        arcade_file_path = rom['file_path']
+                        # 새 파일 경로
+                        new_file_path = absp(
+                            f"res/data/zfb/{rom['new_filename']}.zfb")
+                        if os.path.exists(new_file_path):
+                            # ARCADE 경로의 파일을 새 파일명으로 이동
+                            shutil.move(new_file_path, arcade_file_path)
+                            # os.remove(arcade_file_path)
 
                     else:
                         # 단순 파일명 변경

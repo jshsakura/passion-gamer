@@ -12,10 +12,10 @@ from PyQt5.QtCore import Qt, QObject, QEvent
 from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtGui import QIcon, QStandardItemModel, QPixmap, QFontDatabase, QFont, QColor
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QGridLayout, QPushButton,  QWidget,
-                             QTableView,  QHBoxLayout, QVBoxLayout, QAbstractItemView,
+                             QTableView,  QHBoxLayout, QVBoxLayout, QAbstractItemView, QMenu, QAction,
                              QAbstractScrollArea, QLabel, QLineEdit, QStackedWidget, QToolTip,
                              QFormLayout, QListWidget, QComboBox, QSizePolicy, QHeaderView, QHeaderView, QStyledItemDelegate)
-from .helpers import absp, database_init
+from .helpers import absp, database_init, alert
 
 
 class Gui:
@@ -129,7 +129,10 @@ class Gui:
         # 기본 sort 버튼 숨김
         self.table.horizontalHeader().setSortIndicatorShown(False)
         self.table.setSortingEnabled(False)
+        # 클릭 이벤트 핸들러 연결
         self.table.clicked.connect(self.on_cell_clicked)
+        # 더블클릭 이벤트 핸들러 연결
+        self.table.doubleClicked.connect(self.on_item_double_clicked)
 
         # Add buttons to Horizontal Layout
         hbox = QHBoxLayout()
@@ -218,6 +221,17 @@ class Gui:
         # LoadingOverlay 클래스를 부모 위젯에 추가한 후 이벤트 필터를 설치
         # self.main.setCentralWidget(widget)
         self.main.loading_overlay.installEventFilter(self.main)
+
+        # 메뉴바 생성
+        # menubar = self.main.menuBar()
+
+        # # 파일 메뉴 추가
+        # file_menu = menubar.addMenu('추가작업')
+        # theme_action = QAction('한글 테마 적용', self.main)
+        # shortcut_action = QAction('한글 숏컷 적용', self.main)
+        # file_menu.addAction(theme_action)
+        # file_menu.addAction(shortcut_action)
+
         self.main.show()
 
     def main_win(self):
@@ -411,6 +425,13 @@ class Gui:
             # 셀의 내용을 가져옵니다.
             file_path = self.table_model.item(row, column).text()
             self.open_in_explorer(file_path)
+
+    def on_item_double_clicked(self, index):
+        row = index.row()
+        column = index.column()
+        if column == 8 and self.table_model.item(row, 1).text() == 'ARCADE':
+            alert(
+                '[ARCADE] 플랫폼은 사용자가 직접 파일명을 수정할 수 없습니다.\n롬 폴더에 한글명이 사전 작업 된 바로가기 파일로 대체하는 방식으로 적용됩니다.')
 
     def open_in_explorer(self, file_path):
         folder_path = os.path.dirname(file_path)  # 파일의 폴더 경로를 얻습니다.
