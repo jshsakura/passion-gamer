@@ -6,7 +6,7 @@ import sys
 import logging
 import os
 import time
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QApplication
 import tkinter as tk
 
 FIRST_RUN = True
@@ -62,22 +62,23 @@ def alert(text):
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Warning)
     msg.setWindowTitle('안내')
+    # 화면 중앙 좌표 계산
+    screen_geo = QApplication.primaryScreen().geometry()
+    screen_center = screen_geo.center()
+
+    # 메시지 박스의 크기를 설정
+    msg_box_width = 300  # 메시지 박스의 너비
+    msg_box_height = 200  # 메시지 박스의 높이
+
+    # 메시지 박스를 화면 중앙으로 이동
+    msg.setGeometry(
+        screen_center.x() - msg_box_width // 2,
+        screen_center.y() - msg_box_height // 2,
+        msg_box_width,
+        msg_box_height
+    )
     msg.setText(text)
     msg.exec_()
-
-
-def check_selection(table):
-    '''
-    Get selected rows from table.
-    Returns list: [Rows]
-    '''
-    selection = []
-    for index in table.selectionModel().selectedRows():
-        selection.append(index.row())
-    if not selection:
-        alert('다운로드 목록에서 먼저 파일을 선택해주세요.')
-    else:
-        return selection
 
 
 def create_file(f):

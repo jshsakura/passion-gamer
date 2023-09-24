@@ -27,15 +27,17 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer3.png?raw=true"></img>
 </p>
 
-- `롬 폴더 검색` 버튼을 누르고 잠시 기다려줍니다.
+- `롬 파일 검색` 버튼을 누르고 잠시 기다려줍니다.
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer3-1.png?raw=true"></img>
 </p>
 
-- `롬 파일` 갯수가 무려 `6,000`개가 넘어가기 때문에 프로그램이 멈춘 것처럼 보일 수 있습니다.
+- `롬 파일` 갯수가 무려 `6,000`개가 넘어가기 때문에 전체 조회시 시간이 좀 걸립니다.
 
-향후 `UI`측을 최적화할 예정이니 일단은 잠시 인내심을 가지고 기다려주세요.
+화면당 `500`개씩 페이징해서 보여주기 때문에 상단의 페이지 이동 버튼을 이용해 수정파일을 확인합니다.
+
+추가로 중문판 중국 롬의 경우 불필요한 파일이나 마찬가지기 때문에 `중국 롬 검색` 버튼을 눌러 파일명의 `(CN)` 을 기준으로 단순 검색이 가능합니다.
 
 <br/>
 <p align="center">
@@ -93,5 +95,6 @@
 - 프로그램 내 버튼 아이콘은 멋진 무료 아이콘을 제공하는 [Feather](https://feathericons.com/)를 이용합니다.
 - 윈도우 프로그램의 아이콘은 [svgrepo](https://www.svgrepo.com/)에서 무료 아이콘을 사용했습니다.
 - 프로그램의 로딩 오버레이 아이콘은 [loading.io](https://loading.io) 에서 무료 `svg` 아이콘을 이용하고 있습니다.
+- 롬파일의 썸네일 추출을 위해 [tadpole](https://github.com/EricGoldsteinNz/tadpole) 이 수정한 `frogtool.py`을 적용했습니다.
 - 기종별 아이콘은 `Onion OS`의 [Dot-art by Yoshi-kun](https://github.com/OnionUI/Themes) 를 적용했습니다.
-- 친절한 도우미, 의외로 멍청한 [ChatGPT](https://chat.openai.com/)의 코드 리팩토링 서포트.
+- 친절한 도우미, 그러나 심각하게 멍청한 [ChatGPT](https://chat.openai.com/)의 코드 리팩토링 서포트.

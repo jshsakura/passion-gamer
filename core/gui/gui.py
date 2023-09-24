@@ -1,6 +1,8 @@
+import math
 import os
 import sys
 import logging
+import time
 import webbrowser
 import qdarktheme
 import subprocess
@@ -67,8 +69,8 @@ class Gui:
         sys.exit(app.exec_())
 
     def update_titlebar(self):
-        count = self.table_model.rowCount()
-        title_text = f"{self.app_name} [ 현재 조회된 롬 파일 갯수: {count} ]"
+        count = len(self.actions.all_roms_list)
+        title_text = f"{self.app_name} [ 전체 롬 파일 갯수: {count} ]"
         self.main.setWindowTitle(title_text)
 
     def main_init(self):
@@ -85,13 +87,18 @@ class Gui:
 
         # Table
         self.table = QTableView()
-        headers = ['', '플랫폼', '썸네일', '파일 경로', '용량', '원본 파일명', '수정 파일명']
+
+        headers = ['', '플랫폼', '썸네일', '파일 경로',
+                   '상태 코드', '상태', '용량', '원본 파일명', '수정 파일명']
         self.table.setSizeAdjustPolicy(
             QAbstractScrollArea.AdjustToContentsOnFirstShow)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table.setSortingEnabled(True)
+
+        # 헤더 클릭 이벤트 핸들러 설정
+        self.table.horizontalHeader().sectionClicked.connect(self.on_header_clicked)
         self.table.verticalHeader().hide()
 
         # 테이블 간격 조정
@@ -108,87 +115,150 @@ class Gui:
         self.table.setColumnWidth(0, 40)
         self.table.setColumnWidth(1, 70)
         self.table.setColumnWidth(2, 46)
-        self.table.setColumnWidth(3, 100)
+        self.table.setColumnWidth(3, 70)
         self.table.setColumnWidth(4, 80)
-        self.table.setColumnWidth(5, 145)
+        self.table.setColumnWidth(5, 80)
+        self.table.setColumnWidth(6, 80)
+        self.table.setColumnWidth(7, 145)
 
-        # '변경될 파일명' 열을 오름차순으로 정렬합니다.
-        self.table.sortByColumn(0, Qt.AscendingOrder)
+        # 파일 경로 컬럼 숨김
+        self.table.setColumnHidden(4, True)
+
+        # '원본 파일명' 열을 오름차순으로 정렬합니다.
+        self.table.sortByColumn(7, Qt.AscendingOrder)
+        # 기본 sort 버튼 숨김
+        self.table.horizontalHeader().setSortIndicatorShown(False)
+        self.table.setSortingEnabled(False)
         self.table.clicked.connect(self.on_cell_clicked)
-
-        # Append widgets to grid
-        grid.addWidget(self.table, 1, 0, 1, 3)
 
         # Add buttons to Horizontal Layout
         hbox = QHBoxLayout()
         # Bottom Buttons
-        settings_btn = QPushButton(
+        self.main.settings_btn = QPushButton(
             QIcon(absp('res/icon/settings.svg')), ' 설정')
-        settings_btn.clicked.connect(lambda: self.settings.show(
+        self.main.settings_btn.clicked.connect(lambda: self.settings.show(
         ) if not self.settings.isVisible() else self.settings.raise_())
 
         self.main.refresh_btn = QPushButton(
-            QIcon(absp('res/icon/refresh-cw.svg')), ' 롬 폴더 검색')
+            QIcon(absp('res/icon/refresh-cw.svg')), ' 롬 파일 검색')
+        self.main.remove_cn_btn = QPushButton(
+            QIcon(absp('res/icon/alert-triangle.svg')), ' 중국 롬 검색')
+        self.main.except_btn = QPushButton(
+            QIcon(absp('res/icon/file-minus.svg')), ' 선택항목 제외')
         self.main.remove_btn = QPushButton(
-            QIcon(absp('res/icon/trash-2.svg')), ' 선택항목 제외')
+            QIcon(absp('res/icon/trash-2.svg')), ' 선택항목 삭제')
         self.main.edit_btn = QPushButton(
-            QIcon(absp('res/icon/edit.svg')), ' 실제 파일에 적용')
+            QIcon(absp('res/icon/check-square.svg')), ' 수정사항 적용')
 
-        settings_btn.setFont(self.font)
+        self.main.settings_btn.setFont(self.font)
         self.main.refresh_btn.setFont(self.font)
-        self.main.edit_btn.setFont(self.font)
+        self.main.remove_cn_btn.setFont(self.font)
+        self.main.except_btn.setFont(self.font)
         self.main.remove_btn.setFont(self.font)
+        self.main.edit_btn.setFont(self.font)
 
-        hbox.addWidget(settings_btn)
+        self.main.settings_btn.setStyleSheet("color: #333333;")
+        self.main.refresh_btn.setStyleSheet("color: #333333;")
+        self.main.remove_cn_btn.setStyleSheet("color: #333333;")
+        self.main.except_btn.setStyleSheet("color: #333333;")
+        self.main.remove_btn.setStyleSheet("color: #333333;")
+        self.main.edit_btn.setStyleSheet("color: #333333;")
+
         hbox.addWidget(self.main.refresh_btn)
+        hbox.addWidget(self.main.remove_cn_btn)
+        hbox.addWidget(self.main.except_btn)
         hbox.addWidget(self.main.remove_btn)
         hbox.addWidget(self.main.edit_btn)
+
+        self.main.page_label = QLabel()
+        self.main.page_prev_btn = QPushButton()
+        self.main.page_next_btn = QPushButton()
+
+        # 버튼 아이콘 설정
+        self.main.page_prev_btn.setIcon(
+            QIcon(absp('res/icon/chevron-left.svg')))
+        self.main.page_next_btn.setIcon(
+            QIcon(absp('res/icon/chevron-right.svg')))
+
+        self.main.page_label.setFont(self.font)
+        self.main.page_prev_btn.setFont(self.font)
+        self.main.page_next_btn.setFont(self.font)
+        self.main.page_prev_btn.setEnabled(False)
+        self.main.page_next_btn.setEnabled(False)
+        self.main.page_prev_btn.setStyleSheet("color: #333333;")
+        self.main.page_next_btn.setStyleSheet("color: #333333;")
+
+        # 페이징 라벨 추가
+        self.main.page_label.setAlignment(Qt.AlignCenter)
+
+        # 아래에 페이지 관련 위젯을 추가
+        button_container = QWidget(self.main)
+        button_layout = QGridLayout(button_container)
+        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_layout.addWidget(self.main.page_prev_btn, 1, 0)
+        button_layout.addWidget(self.main.page_next_btn, 1, 1)
+
+        grid.addWidget(self.main.settings_btn, 1, 0)
+        grid.addWidget(self.main.page_label, 1, 3)
+        grid.addWidget(button_container, 1, 4)
 
         self.main.setWindowFlags(self.main.windowFlags()
                                  & Qt.CustomizeWindowHint)
 
-        grid.addLayout(hbox, 2, 0, 1, 3)
+        # Append widgets to grid
+        grid.addWidget(self.table, 2, 0, 1, 5)
+        grid.addLayout(hbox, 3, 0, 1, 5)
         widget.setLayout(grid)
-        self.main.resize(716, 415)
+        self.main.resize(720, 450)
         # Set size policies for the table
         self.table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         # 로딩 오버레이 위젯 생성
-        self.main.loading_overlay = QWidget(self.main)
-        self.main.loading_overlay.setGeometry(
-            0, 0, self.main.width(), self.main.height())
-        self.main.loading_overlay.setStyleSheet(
-            "background-color: rgba(255, 255, 255, 0.6);")
-        self.main.loading_overlay.setVisible(False)
-
-        # SVG 이미지를 로딩 오버레이 위젯에 추가
-        svg_widget = QSvgWidget(absp('res/icon/loading_image.svg'))
-        svg_widget.setGeometry(0, 0, 100, 100)  # 중앙에 표시하려면 위치와 크기 조정이 필요합니다.
-        svg_layout = QVBoxLayout(self.main.loading_overlay)
-        svg_layout.addWidget(svg_widget)
-        svg_layout.setAlignment(Qt.AlignCenter)
-
-        self.hoverEventFilter = HoverEventFilter(self.table)
-        self.table.viewport().installEventFilter(self.hoverEventFilter)
-        self.table.setMouseTracking(True)
-
+        self.main.loading_overlay = LoadingOverlay(self.main)
+        # LoadingOverlay 클래스를 부모 위젯에 추가한 후 이벤트 필터를 설치
+        # self.main.setCentralWidget(widget)
+        self.main.loading_overlay.installEventFilter(self.main)
         self.main.show()
 
     def main_win(self):
         self.main.refresh_btn.clicked.connect(self.actions.roms_scan)
+        self.main.remove_cn_btn.clicked.connect(self.actions.roms_unnecessary)
+        self.main.except_btn.clicked.connect(self.actions.roms_except)
         self.main.remove_btn.clicked.connect(self.actions.roms_remove)
         self.main.edit_btn.clicked.connect(self.actions.roms_replace)
+        # 페이지 이전/다음 버튼 클릭 시 해당 함수 연결
+        self.main.page_prev_btn.clicked.connect(self.actions.prev_page)
+        self.main.page_next_btn.clicked.connect(self.actions.next_page)
+
+        self.table.setMouseTracking(True)
 
     # 로딩 오버레이를 활성화하는 메서드
-
     def show_loading_overlay(self):
         if self.main:
-            self.main.loading_overlay.setVisible(True)
+            self.main.loading_overlay.show()
+            self.main.settings_btn.setEnabled(False)
+            self.main.refresh_btn.setEnabled(False)
+            self.main.except_btn.setEnabled(False)
+            self.main.remove_btn.setEnabled(False)
+            self.main.remove_cn_btn.setEnabled(False)
+            self.main.edit_btn.setEnabled(False)
+            self.main.page_prev_btn.setEnabled(False)
+            self.main.page_next_btn.setEnabled(False)
 
     # 로딩 오버레이를 비활성화하는 메서드
     def hide_loading_overlay(self):
         if self.main:
-            self.main.loading_overlay.setVisible(False)
+            self.main.loading_overlay.hide()
+            self.main.settings_btn.setEnabled(True)
+            self.main.refresh_btn.setEnabled(True)
+            self.main.except_btn.setEnabled(True)
+            self.main.remove_btn.setEnabled(True)
+            self.main.remove_cn_btn.setEnabled(True)
+            self.main.edit_btn.setEnabled(True)
+            self.main.page_prev_btn.setEnabled(True)
+            self.main.page_next_btn.setEnabled(True)
+            # 스크롤바 초기화
+            self.table.verticalScrollBar().setValue(0)
 
     def settings_win(self):
         # Define Settings Win
@@ -211,11 +281,6 @@ class Gui:
         hbox.addWidget(self.stacked_settings)
         central_widget.setLayout(hbox)
         self.settings.setCentralWidget(central_widget)
-
-        '''
-        Child widget
-        Behavior Settings
-        '''
 
         behavior_settings = QWidget()
         self.stacked_settings.addWidget(behavior_settings)
@@ -295,14 +360,49 @@ class Gui:
         column = item.column()
         # 셀의 값이 변경되면 호출되는 메서드
 
-        if column == 6:  # 수정된 아이템이 3번 열에 있는 경우
-            other_item = item.model().item(row, 5)
-            if other_item.text() == item.text():
-                item.setBackground(QColor(230, 255, 230))  # 이미 매칭된 경우
-            elif not item.text():  # 셀의 값이 비어 있는 경우
-                item.setBackground(QColor(255, 179, 179))  # 배경색을 빨간색으로 설정
+        if column == 5:
+            status = item.model().item(row, 4).text()
+
+            if status == '0':
+                item.model().item(row, 5).setForeground(QColor(255, 51, 51))
+            elif status == '1':
+                item.model().item(row, 5).setForeground(QColor(0, 204, 153))
+            elif status == '2':
+                item.model().item(row, 5).setForeground(QColor(0, 204, 153))
+            elif status == '3':
+                item.model().item(row, 5).setForeground(QColor(0, 204, 153))
+            elif status == '4':
+                item.model().item(row, 5).setForeground(QColor(255, 51, 51))
+            elif status == '5':
+                item.model().item(row, 5).setForeground(QColor(255, 153, 0))
             else:
+                item.model().item(row, 5).setForeground(QColor(128, 128, 128))
+
+        elif column == 8:  # 수정된 아이템이 있는 경우
+            platform_name = item.model().item(row, 1).text()
+            original_filename = item.model().item(row, 7).text()
+            file_path = item.model().item(row, 3).text()
+            new_filename = item.text()
+            action = 'update'
+
+            if original_filename == new_filename:
+                item.setBackground(QColor(230, 255, 230))  # 이미 매칭된 경우
+            elif not new_filename:  # 셀의 값이 비어 있는 경우
+                item.model().item(row, 4).setText('0')
+                item.model().item(row, 5).setText('사용자 입력')
+                item.model().item(row, 5).setForeground(QColor(255, 51, 51))
+                item.setBackground(QColor(255, 179, 179))  # 배경색을 빨간색으로 설정
+                self.actions.update_row_from_all_roms_list(
+                    file_path, new_filename, action)
+                # self.actions.populate_table_with_roms()
+            else:
+                item.model().item(row, 4).setText('2')
+                item.model().item(row, 5).setText('수정 대기')
+                item.model().item(row, 5).setForeground(QColor(0, 204, 153))
                 item.setBackground(QColor(255, 255, 255))  # 배경색을 기본으로 설정
+                self.actions.update_row_from_all_roms_list(
+                    file_path, new_filename, action)
+                # self.actions.populate_table_with_roms()
 
     def on_cell_clicked(self, index):
         row = index.row()
@@ -323,22 +423,53 @@ class Gui:
         elif platform.system() == 'Linux':
             subprocess.Popen(['xdg-open', folder_path])
 
+    def on_header_clicked(self, logical_index):
+        # 헤더 클릭 시 호출되는 함수
+        order = self.table.horizontalHeader().sortIndicatorOrder()
 
-class HoverEventFilter(QObject):
-    def __init__(self, table, parent=None):
-        super().__init__(parent)
-        self.table = table
+        # column 변수를 어떻게 정의했는지에 따라 정렬합니다.
+        column = {1: "platform_name", 3: "file_path", 5: "status_name", 6: "file_byte_size",
+                  7: "origin_filename", 8: "new_filename"}
 
-    def eventFilter(self, obj, event):
-        if event.type() == QEvent.HoverMove:  # 호버 움직임 감지
-            point = event.pos()  # 호버 위치 얻기
-            logging.debug(point)
-            index = self.table.indexAt(point)  # 호버 위치의 셀 인덱스 얻기
-            if index.isValid() and index.column() == 2:  # 두 번째 컬럼이면
-                # 툴팁 표시
-                QToolTip.showText(event.globalPos(),
-                                  "이곳을 클릭하여 탐색기를 엽니다.", self.main.table)
+        # 정렬 불가능한 열은 볼 것도 없음
+        if not logical_index in column:
+            self.table.horizontalHeader().setSortIndicatorShown(False)
+            self.table.setSortingEnabled(False)
+            return
+        else:
+            self.table.horizontalHeader().setSortIndicatorShown(True)
+            self.table.setSortingEnabled(True)
+
+        if self.actions:
+            self.actions.all_roms_list.sort(key=lambda rom: (
+                rom[column[logical_index]] is None, rom[column[logical_index]]), reverse=(order == Qt.DescendingOrder))
+
+            # 현재 페이지를 다시 그립니다.
+            self.actions.populate_table_with_roms()
+
+            # 정렬 방향을 토글하며 해당 열을 소팅합니다.
+            if order == Qt.AscendingOrder:
+                self.table.sortByColumn(logical_index, Qt.DescendingOrder)
+                self.table.horizontalHeader().setSortIndicator(logical_index, Qt.AscendingOrder)
             else:
-                QToolTip.hideText()
-            return True
-        return super().eventFilter(obj, event)
+                self.table.sortByColumn(logical_index, Qt.AscendingOrder)
+                self.table.horizontalHeader().setSortIndicator(logical_index, Qt.DescendingOrder)
+
+
+class LoadingOverlay(QWidget):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setStyleSheet("background-color: rgba(255, 255, 255, 0.6);")
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        # SVG 이미지를 로딩 오버레이 위젯에 추가
+        svg_widget = QSvgWidget(absp('res/icon/loading_image.svg'))
+        svg_widget.setGeometry(0, 0, 100, 100)  # 중앙에 표시하려면 위치와 크기 조정이 필요합니다.
+        svg_layout = QVBoxLayout(self)
+        svg_layout.addWidget(svg_widget)
+        svg_layout.setAlignment(Qt.AlignCenter)
+        self.setGeometry(0, 0, self.parent().width(), self.parent().height())
+        self.hide()
+
+    def resizeEvent(self, event):
+        # 오버레이의 지오메트리를 부모 위젯의 크기와 일치하도록 업데이트합니다.
+        self.setGeometry(0, 0, self.parent().width(), self.parent().height())
