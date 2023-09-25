@@ -142,7 +142,9 @@ class Gui:
         self.main.settings_btn.clicked.connect(lambda: self.settings.show(
         ) if not self.settings.isVisible() else self.settings.raise_())
         self.main.theme_btn = QPushButton(
-            QIcon(absp('res/icon/smile.svg')), ' 드드라 테마')
+            QIcon(absp('res/icon/smile.svg')), ' 드드라 테마 설치')
+        self.main.shortcut_btn = QPushButton(
+            QIcon(absp('res/icon/external-link.svg')), ' 한글 숏컷 설치')
 
         self.main.refresh_btn = QPushButton(
             QIcon(absp('res/icon/refresh-cw.svg')), ' 롬 파일 검색')
@@ -157,6 +159,7 @@ class Gui:
 
         self.main.settings_btn.setFont(self.font)
         self.main.theme_btn.setFont(self.font)
+        self.main.shortcut_btn.setFont(self.font)
         self.main.refresh_btn.setFont(self.font)
         self.main.remove_cn_btn.setFont(self.font)
         self.main.except_btn.setFont(self.font)
@@ -165,6 +168,7 @@ class Gui:
 
         self.main.settings_btn.setStyleSheet("color: #333333;")
         self.main.theme_btn.setStyleSheet("color: #333333;")
+        self.main.shortcut_btn.setStyleSheet("color: #333333;")
         self.main.refresh_btn.setStyleSheet("color: #333333;")
         self.main.remove_cn_btn.setStyleSheet("color: #333333;")
         self.main.except_btn.setStyleSheet("color: #333333;")
@@ -207,6 +211,7 @@ class Gui:
 
         grid.addWidget(self.main.settings_btn, 1, 0)
         grid.addWidget(self.main.theme_btn, 1, 1)
+        grid.addWidget(self.main.shortcut_btn, 1, 2)
         grid.addWidget(self.main.page_label, 1, 3)
         grid.addWidget(button_container, 1, 4)
 
@@ -241,6 +246,7 @@ class Gui:
 
     def main_win(self):
         self.main.theme_btn.clicked.connect(self.actions.set_theme)
+        self.main.shortcut_btn.clicked.connect(self.actions.set_shortcut)
         self.main.refresh_btn.clicked.connect(self.actions.roms_scan)
         self.main.remove_cn_btn.clicked.connect(self.actions.roms_unnecessary)
         self.main.except_btn.clicked.connect(self.actions.roms_except)
@@ -324,7 +330,7 @@ class Gui:
         form_layout.addRow(self.device_select)
 
         # Change Directory
-        form_layout.addRow(QLabel('롬 파일(ROMS) 경로:'))
+        form_layout.addRow(QLabel('SD 카드(또는 롬 폴더) 경로:'))
 
         dl_directory_btn = QPushButton('폴더 선택..')
         dl_directory_btn.clicked.connect(self.actions.set_dl_directory)

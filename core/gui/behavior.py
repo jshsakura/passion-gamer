@@ -1,6 +1,7 @@
 import os
 import logging
 from pathlib import Path
+import shutil
 from .frogtool import zxx_ext
 
 from PyQt5.QtCore import Qt, QThreadPool, QSize
@@ -81,20 +82,93 @@ class GuiBehavior:
             settings.append(1)
         self.settings = settings
 
-    def set_theme_install(self):
-        logging.debug('테마 설치 시작!')
+    def set_resource_install(self, action):
         # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
         roms_folder = get_settings('directory')
         # 검색할 폴더
         target_folder = 'Resources'
+        resources_path = None
+        custom_resources_files = []
         # 리소스 폴더 검색
         if roms_folder:
-            for root, dirs, files in os.walk(roms_folder):
-                for file in files:
-                    logging.debug(os.path.dirname(file))
-                    if os.path.dirname(file) == target_folder:
-                        print('test !!!!!!!!!!!')
+            # 리소스 폴더 검색
+            current_folder = roms_folder  # 현재 폴더를 설정된 경로로 초기화
+
+            # 설정된 경로에서 상위 폴더로 이동하며 검색
+            while current_folder:
+                for root, dirs, files in os.walk(current_folder):
+                    if target_folder in os.path.normpath(root):
+                        # 리소스 폴더를 발견하면 중단!
+                        resources_path = os.path.normpath(root)
                         break
+
+                # 상위 폴더로 이동 (1단계 상위로 이동)
+                current_folder = os.path.dirname(current_folder)
+
+                # 리소스 폴더를 찾았을 때 중단
+                if resources_path:
+                    break
+
+        if resources_path:
+            logging.debug(f"리소스 폴더를 찾았습니다: {resources_path}")
+        else:
+            logging.debug("리소스 폴더를 찾을 수 없었습니다.")
+
+        change_files = 0
+        # 1. resources_path에 위치한 파일 목록 가져오기
+        if resources_path:
+            resources_files = os.listdir(resources_path)
+
+            # 2. absp(f'res/data/Resources')에 위치한 파일 목록 가져오기
+            custom_resources_path = os.path.normpath(
+                absp(f'res/data/Resources'))
+            custom_resources_files = os.listdir(custom_resources_path)
+
+            # 수정 대상 파일
+            target_resources_cnt = 0
+            if action == 'theme':
+                target_resources_cnt = 44
+            elif action == 'shortcut':
+                target_resources_cnt = 1
+
+            # 3. 두 목록을 비교하여 수정전 파일갯수 카운트
+            for custom_file in custom_resources_files:
+                if custom_file in resources_files:
+                    # 한글 숏컷은 제외
+                    if action == 'theme' and custom_file == 'xfgle.hgp':
+                        continue
+                    elif action == 'shortcut' and custom_file != 'xfgle.hgp':
+                        continue
+                    change_files = change_files+1
+
+            # 4. 두 목록을 비교하여 동일한 파일 교체
+            if change_files == target_resources_cnt:
+                for custom_file in custom_resources_files:
+                    if custom_file in resources_files:
+                        # 한글 숏컷은 제외
+                        if action == 'theme' and custom_file == 'xfgle.hgp':
+                            continue
+                        elif action == 'shortcut' and custom_file != 'xfgle.hgp':
+                            continue
+                        # 4. 파일 덮어쓰기 (복사 및 붙여넣기)
+                        custom_file_path = os.path.join(
+                            custom_resources_path, custom_file)
+                        resources_file_path = os.path.join(
+                            resources_path, custom_file)
+                        shutil.copyfile(custom_file_path,
+                                        resources_file_path)
+                        logging.debug(f"패치를 위해 {custom_file}를 덮어썼습니다.")
+
+        # 5. 최종 작업 결과 알림.
+        work_name = '드드라 테마' if action == 'theme' else '한글 숏컷'
+        if change_files > 0 and change_files == target_resources_cnt:
+            alert(f'Resources 폴더 안에 파일을 덮어쓰고, {work_name} 설치 작업이 완료되었습니다.')
+        elif change_files > 0:
+            alert(
+                f'{work_name} 설치를 위해 필요한 총 {target_resources_cnt} 개의 파일 중 {change_files} 개만 검색되었습니다.\n[설정] 버튼을 눌러 선택하신 SD 카드 경로를 확인해주세요.')
+        else:
+            alert(
+                f'Resources 폴더에 파일을 찾을 수 없어 {work_name} 설치를 진행할 수 없었습니다.\n[설정] 버튼을 눌러 선택하신 SD 카드 경로를 확인해주세요.')
 
     def get_roms_list(self, action):
 
@@ -104,20 +178,21 @@ class GuiBehavior:
         # 검색할 platform_name 값들
         target_platforms = ['ARCADE', 'FC', 'GB', 'GBA', 'GBC',
                             'MD', 'SFC']  # 'ARCADE'는 zfb 교체
+        target_file_extension = ['.zfb', '.zfc',
+                                 '.zgb', '.zmd', '.zsf']
 
         if roms_folder:
             for root, dirs, files in os.walk(roms_folder):
                 for file in files:
                     rom_path = os.path.normpath(os.path.join(root, file))
                     file_extension = os.path.splitext(file)[-1].lower()
-
                     origin_filename = get_file_name_without_extension(rom_path)
                     platform_name = get_platform_name(rom_path)
                     new_filename = ''
                     shortcut_link = ''
 
                     # logging.debug('file_extension: '+str(file_extension))
-                    if '.z' in file_extension and platform_name in target_platforms:
+                    if file_extension in target_file_extension and platform_name in target_platforms:
                         db_result = get_db_game_name(
                             platform_name, origin_filename)
 
@@ -320,6 +395,25 @@ class GuiBehavior:
 
         self.gui.update_titlebar()
 
+    def set_shortcut(self):
+        # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
+        roms_folder = get_settings('directory')
+        if not roms_folder:
+            alert(
+                '현재 [Resource] 폴더를 찾을 수 없습니다.\n먼저 설정에서 SD 카드 위치를 지정하고 테마를 설치해야합니다.')
+            return
+
+        if not self.confirm_shortcut_change():
+            return
+
+        # 스캔 시작 버튼을 누를 때 로딩 오버레이를 표시합니다.
+        worker = RomScannerWorker(self, action='shortcut_install')
+        worker.signals.showLoading.connect(self.gui.show_loading_overlay)
+        worker.signals.hideLoading.connect(self.gui.hide_loading_overlay)
+        worker.signals.resourcesCopy.connect(
+            self.set_resource_install)
+        self.worker_thread.start(worker)
+
     def set_theme(self):
         # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
         roms_folder = get_settings('directory')
@@ -335,7 +429,8 @@ class GuiBehavior:
         worker = RomScannerWorker(self, action='theme_install')
         worker.signals.showLoading.connect(self.gui.show_loading_overlay)
         worker.signals.hideLoading.connect(self.gui.hide_loading_overlay)
-        worker.signals.themeInstall.connect(self.set_theme_install)
+        worker.signals.resourcesCopy.connect(
+            self.set_resource_install)
         self.worker_thread.start(worker)
 
     def roms_scan(self):
@@ -387,8 +482,14 @@ class GuiBehavior:
         self.roms_scan()
 
     def confirm_change_theme(self):
-        message = "드드라님이 만든 한글테마로 파일을 교체하고 바로가기 경로를 수정합니다.\n정말 변경하시겠습니까?"
-        reply = QMessageBox.question(None, '테마 변경 확인', message,
+        message = "드드라님이 제작한 EpicNoir 한글 테마로 파일을 교체합니다.\n정말 적용하시겠습니까?"
+        reply = QMessageBox.question(None, '테마 적용을 위한 Resources 폴더 내 파일 변경', message,
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        return reply == QMessageBox.Yes
+
+    def confirm_shortcut_change(self):
+        message = "게임 플랫폼별 화면에 4개씩 노출되는 [숏컷] 바로가기를 수정합니다.\nResources 폴더 내부의 xfgle.hgp 파일을 한글 목록으로 교체하게됩니다.\n만약 숏컷이 설정된 롬 파일을 따로 변경할 예정이라면 주의하세요."
+        reply = QMessageBox.question(None, '[숏컷] 바로가기 경로 수정을 위한 Resources 폴더 내 파일 변경', message,
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         return reply == QMessageBox.Yes
 
