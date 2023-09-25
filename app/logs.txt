@@ -1,2 +1,0 @@
-DEBUG:root:리소스 폴더를 찾았습니다: C:\Users\GPD\Desktop\상위폴더\Resources
-DEBUG:root:패치를 위해 xfgle.hgp를 덮어썼습니다.
