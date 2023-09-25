@@ -14,6 +14,7 @@ class RomScannerWorkerSignals(QObject):
     showLoading = pyqtSignal()  # 로딩 오버레이 보여주기 위한 신호
     hideLoading = pyqtSignal()  # 로딩 오버레이 숨기기 위한 신호
     renameCompleted = pyqtSignal()
+    themeInstall = pyqtSignal()
 
 
 class RomScannerWorker(QRunnable):
@@ -62,6 +63,8 @@ class RomScannerWorker(QRunnable):
         elif self.action == 'remove' or self.action == 'except':
             rows_to_remove = self.rows  # 여기에서 삭제하려는 행의 인덱스 목록을 생성합니다.
             self.signals.rowsToRemove.emit(rows_to_remove, self.action)
+        elif self.action == 'theme_install':
+            self.signals.themeInstall.emit()
         elif self.action == 'replace':
             # 롬 파일 목록 얻기
             roms_list = self.gui_behavior.all_roms_list

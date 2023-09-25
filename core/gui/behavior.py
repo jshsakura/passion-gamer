@@ -81,12 +81,25 @@ class GuiBehavior:
             settings.append(1)
         self.settings = settings
 
+    def set_theme_install(self):
+        logging.debug('테마 설치 시작!')
+        # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
+        roms_folder = get_settings('directory')
+        # 검색할 폴더
+        target_folder = 'Resources'
+        # 리소스 폴더 검색
+        if roms_folder:
+            for root, dirs, files in os.walk(roms_folder):
+                for file in files:
+                    logging.debug(os.path.dirname(file))
+                    if os.path.dirname(file) == target_folder:
+                        print('test !!!!!!!!!!!')
+                        break
+
     def get_roms_list(self, action):
 
         # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
         roms_folder = get_settings('directory')
-        # if roms_folder and not roms_folder in 'ROMS':
-        #     roms_folder = os.path.normpath(roms_folder+'/ROMS')
         roms_list = []
         # 검색할 platform_name 값들
         target_platforms = ['ARCADE', 'FC', 'GB', 'GBA', 'GBC',
@@ -100,26 +113,32 @@ class GuiBehavior:
 
                     origin_filename = get_file_name_without_extension(rom_path)
                     platform_name = get_platform_name(rom_path)
-
-                    new_filename = get_db_game_name(
-                        platform_name, origin_filename)
-
-                    status = '0'  # 사용자 입력
-                    # status = '1' # DB 일치
-                    # status = '2' # 수정 대기
-                    # status = '4' # 삭제 대기
-                    # status = '5' # 제외 됨
-                    if not new_filename:
-                        status = '0'
-                    elif origin_filename != new_filename and new_filename:
-                        status = '1'
-                    elif origin_filename == new_filename:
-                        status = '3'
-                    else:
-                        status = '2'
+                    new_filename = ''
+                    shortcut_link = ''
 
                     # logging.debug('file_extension: '+str(file_extension))
                     if '.z' in file_extension and platform_name in target_platforms:
+                        db_result = get_db_game_name(
+                            platform_name, origin_filename)
+
+                        if db_result:
+                            new_filename = str(db_result['kr_filename'])
+                            shortcut_link = str(db_result['shortcut_link'])
+
+                        status = '0'  # 사용자 입력
+                        # status = '1' # DB 일치
+                        # status = '2' # 수정 대기
+                        # status = '4' # 삭제 대기
+                        # status = '5' # 제외 됨
+                        if not new_filename:
+                            status = '0'
+                        elif origin_filename != new_filename and new_filename:
+                            status = '1'
+                        elif origin_filename == new_filename:
+                            status = '3'
+                        else:
+                            status = '2'
+
                         # 중문롬 검색 조건일때 (CN)이 없다면 패스
                         if action == 'unnecessary' and '(CN)' not in origin_filename:
                             continue
@@ -150,7 +169,7 @@ class GuiBehavior:
                         elif status == '5':
                             status_name = "제외 됨"
 
-                        roms_list.append({"file_path": rom_path, "platform_name": platform_name, "origin_filename": origin_filename,
+                        roms_list.append({"file_path": rom_path, "platform_name": platform_name, "origin_filename": origin_filename, "shortcut_link": shortcut_link,
                                           "new_filename": new_filename, "status": status, "status_name": status_name, "file_size": file_size, "file_byte_size": file_byte_size, "thumbnail": thumbnail, "platform_icon": platform_icon})
         else:
             alert('설정하신 롬 파일 경로가 없습니다.')
@@ -161,6 +180,9 @@ class GuiBehavior:
         roms_list = self.get_current_page_roms()
         # 테이블을 비우고 진행
         self.gui.table_model.removeRows(0, self.gui.table_model.rowCount())
+
+        italic_font = self.gui.font
+        italic_font.setItalic(True)
 
         for row, rom in enumerate(roms_list):
             # 행 높이 수정, 아이콘 사이즈 수정
@@ -174,6 +196,7 @@ class GuiBehavior:
             thumbnail = rom['thumbnail']
             file_size = rom['file_size']
             status = rom['status']
+            shortcut_link = rom['shortcut_link']
 
             status_name = rom['status_name']
             if file_path in self.remove_roms_list:
@@ -279,9 +302,11 @@ class GuiBehavior:
             if platform_name == 'ARCADE':
                 new_filename_item.setFlags(origin_filename_item.flags(
                 ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                new_filename_item.setForeground(QColor(26, 26, 26))
-                italic_font = self.gui.font
-                italic_font.setItalic(True)
+                new_filename_item.setForeground(QColor(255, 128, 0))
+                new_filename_item.setFont(italic_font)
+
+            elif shortcut_link:
+                new_filename_item.setForeground(QColor(255, 128, 0))
                 new_filename_item.setFont(italic_font)
 
             # 행 높이 수정, 아이콘 사이즈 수정
@@ -294,6 +319,24 @@ class GuiBehavior:
                 f"페이지 {self.page} / {self.get_total_pages()}")
 
         self.gui.update_titlebar()
+
+    def set_theme(self):
+        # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
+        roms_folder = get_settings('directory')
+        if not roms_folder:
+            alert(
+                '현재 [Resource] 폴더를 찾을 수 없습니다.\n먼저 설정에서 SD 카드 위치를 지정하고 테마를 설치해야합니다.')
+            return
+
+        if not self.confirm_change_theme():
+            return
+
+        # 스캔 시작 버튼을 누를 때 로딩 오버레이를 표시합니다.
+        worker = RomScannerWorker(self, action='theme_install')
+        worker.signals.showLoading.connect(self.gui.show_loading_overlay)
+        worker.signals.hideLoading.connect(self.gui.hide_loading_overlay)
+        worker.signals.themeInstall.connect(self.set_theme_install)
+        self.worker_thread.start(worker)
 
     def roms_scan(self):
         # 삭제,제외 대상 초기화
@@ -343,6 +386,12 @@ class GuiBehavior:
         alert('롬 파일의 이름이 모두 변경되었습니다.\n목록을 새로 고칩니다.')
         self.roms_scan()
 
+    def confirm_change_theme(self):
+        message = "드드라님이 만든 한글테마로 파일을 교체하고 바로가기 경로를 수정합니다.\n정말 변경하시겠습니까?"
+        reply = QMessageBox.question(None, '테마 변경 확인', message,
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        return reply == QMessageBox.Yes
+
     def confirm_bulk_rename(self):
         message = ''
         if len(self.remove_roms_list) > 0:
@@ -351,6 +400,7 @@ class GuiBehavior:
             message = "수정 파일명이 존재하는 파일들의 이름을 변경하시겠습니까?"
         reply = QMessageBox.question(None, '파일명 일괄 변경 확인', message,
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
         return reply == QMessageBox.Yes
 
     def ask_for_delete_confirmation(self, action):

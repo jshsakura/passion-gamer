@@ -116,6 +116,7 @@ def database_init():
         platform_name TEXT not null,
         origin_filename TEXT not null,
         kr_filename TEXT,
+        shortcut_link TEXT,
         CONSTRAINT gamelists_pk PRIMARY KEY (platform_name,origin_filename)
     )
     ''')
@@ -139,13 +140,13 @@ def get_db_game_name(platform_name, origin_filename):
     category = 'gamelists'
     conn = sqlite3.connect('app/local.db')
     c = conn.cursor()
-    c.execute("SELECT kr_filename FROM gamelists WHERE platform_name=? AND UPPER(REPLACE(REPLACE(origin_filename,'.',''),' ','')) = UPPER(REPLACE(REPLACE(?,'.',''),' ','')) OR kr_filename = ?",
+    c.execute("SELECT kr_filename,shortcut_link FROM gamelists WHERE platform_name=? AND UPPER(REPLACE(REPLACE(origin_filename,'.',''),' ','')) = UPPER(REPLACE(REPLACE(?,'.',''),' ','')) OR kr_filename = ?",
               (platform_name, origin_filename, origin_filename))
     result = c.fetchone()
     conn.close()
     if result:
-        return str(result[0])
-    return None
+        return {"kr_filename": result[0], "shortcut_link": result[1]}
+    return {"kr_filename": '', "shortcut_link": ''}
 
 
 def set_settings(key, value):

@@ -141,6 +141,8 @@ class Gui:
             QIcon(absp('res/icon/settings.svg')), ' 설정')
         self.main.settings_btn.clicked.connect(lambda: self.settings.show(
         ) if not self.settings.isVisible() else self.settings.raise_())
+        self.main.theme_btn = QPushButton(
+            QIcon(absp('res/icon/smile.svg')), ' 드드라 테마')
 
         self.main.refresh_btn = QPushButton(
             QIcon(absp('res/icon/refresh-cw.svg')), ' 롬 파일 검색')
@@ -154,6 +156,7 @@ class Gui:
             QIcon(absp('res/icon/check-square.svg')), ' 수정사항 적용')
 
         self.main.settings_btn.setFont(self.font)
+        self.main.theme_btn.setFont(self.font)
         self.main.refresh_btn.setFont(self.font)
         self.main.remove_cn_btn.setFont(self.font)
         self.main.except_btn.setFont(self.font)
@@ -161,6 +164,7 @@ class Gui:
         self.main.edit_btn.setFont(self.font)
 
         self.main.settings_btn.setStyleSheet("color: #333333;")
+        self.main.theme_btn.setStyleSheet("color: #333333;")
         self.main.refresh_btn.setStyleSheet("color: #333333;")
         self.main.remove_cn_btn.setStyleSheet("color: #333333;")
         self.main.except_btn.setStyleSheet("color: #333333;")
@@ -202,6 +206,7 @@ class Gui:
         button_layout.addWidget(self.main.page_next_btn, 1, 1)
 
         grid.addWidget(self.main.settings_btn, 1, 0)
+        grid.addWidget(self.main.theme_btn, 1, 1)
         grid.addWidget(self.main.page_label, 1, 3)
         grid.addWidget(button_container, 1, 4)
 
@@ -235,6 +240,7 @@ class Gui:
         self.main.show()
 
     def main_win(self):
+        self.main.theme_btn.clicked.connect(self.actions.set_theme)
         self.main.refresh_btn.clicked.connect(self.actions.roms_scan)
         self.main.remove_cn_btn.clicked.connect(self.actions.roms_unnecessary)
         self.main.except_btn.clicked.connect(self.actions.roms_except)
@@ -251,6 +257,7 @@ class Gui:
         if self.main:
             self.main.loading_overlay.show()
             self.main.settings_btn.setEnabled(False)
+            self.main.theme_btn.setEnabled(False)
             self.main.refresh_btn.setEnabled(False)
             self.main.except_btn.setEnabled(False)
             self.main.remove_btn.setEnabled(False)
@@ -264,6 +271,7 @@ class Gui:
         if self.main:
             self.main.loading_overlay.hide()
             self.main.settings_btn.setEnabled(True)
+            self.main.theme_btn.setEnabled(True)
             self.main.refresh_btn.setEnabled(True)
             self.main.except_btn.setEnabled(True)
             self.main.remove_btn.setEnabled(True)
@@ -432,6 +440,9 @@ class Gui:
         if column == 8 and self.table_model.item(row, 1).text() == 'ARCADE':
             alert(
                 '[ARCADE] 플랫폼은 사용자가 직접 파일명을 수정할 수 없습니다.\n롬 폴더에 한글명이 사전 작업 된 바로가기 파일로 대체하는 방식으로 적용됩니다.')
+        elif column == 8 and self.table_model.item(row, column).font().italic():
+            alert(
+                '선택하신 롬은 플랫폼 메인화면에 기본 [숏컷]으로 지정된 게임입니다.\n만약 파일명을 수정하면 설정 파일의 내용을 직접 수정해야하니 주의가 필요합니다!')
 
     def open_in_explorer(self, file_path):
         folder_path = os.path.dirname(file_path)  # 파일의 폴더 경로를 얻습니다.

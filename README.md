@@ -84,7 +84,7 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer9.png?raw=true"></img>
 </p>
 
-- 본 프로그램은 롬 폴더 내의 파일 명을 실제로 직접 변경하기 때문에, 아무쪼록 백업이 중요하며 사용에 주의가 필요합니다.
+- 본 프로그램은 SD 카드의 롬 폴더 내의 파일 명을 실제로 직접 변경하기 때문에, 아무쪼록 백업이 중요하며 사용에 주의가 필요합니다.
 - 한글 목록으로 변환 이후 영문 키보드만 지원하는 덕에 검색이 불가능해지거나 기존 게임의 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 가 동작하지 않기 때문에 직접 사용자가 수정이 필요합니다.
 
 - 네이버 무적풍화륜님의 소통카페 측 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 수정 방법을 참고해 `SF2000`의 SD 카드 안에 `Resource` 폴더의 `xfgle.hgp` 파일을 교체하거나 수정해줘야만 정상적으로 사용이 가능합니다.
