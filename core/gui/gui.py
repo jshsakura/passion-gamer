@@ -13,9 +13,9 @@ from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtGui import QIcon, QStandardItemModel, QPixmap, QFontDatabase, QFont, QColor
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QGridLayout, QPushButton,  QWidget,
                              QTableView,  QHBoxLayout, QVBoxLayout, QAbstractItemView, QMenu, QAction,
-                             QAbstractScrollArea, QLabel, QLineEdit, QStackedWidget, QToolTip,
+                             QAbstractScrollArea, QLabel, QLineEdit, QStackedWidget, QMessageBox,
                              QFormLayout, QListWidget, QComboBox, QSizePolicy, QHeaderView, QHeaderView, QStyledItemDelegate)
-from .helpers import absp, database_init, alert
+from .helpers import *
 
 
 class Gui:
@@ -24,6 +24,7 @@ class Gui:
         self.app_name = 'Retro Passion gamer'
         self.font = None
         self.table_model = None
+        self.msg_box = None
 
         # Init DB
         database_init()
@@ -142,7 +143,7 @@ class Gui:
         self.main.settings_btn.clicked.connect(lambda: self.settings.show(
         ) if not self.settings.isVisible() else self.settings.raise_())
         self.main.theme_btn = QPushButton(
-            QIcon(absp('res/icon/smile.svg')), ' 드드라 테마 설치')
+            QIcon(absp('res/icon/smile.svg')), ' 드드라 테마')
         self.main.shortcut_btn = QPushButton(
             QIcon(absp('res/icon/external-link.svg')), ' 한글 숏컷 설치')
 
@@ -177,6 +178,7 @@ class Gui:
 
         hbox.addWidget(self.main.refresh_btn)
         hbox.addWidget(self.main.remove_cn_btn)
+        hbox.addWidget(self.main.shortcut_btn)
         hbox.addWidget(self.main.except_btn)
         hbox.addWidget(self.main.remove_btn)
         hbox.addWidget(self.main.edit_btn)
@@ -211,16 +213,15 @@ class Gui:
 
         grid.addWidget(self.main.settings_btn, 1, 0)
         grid.addWidget(self.main.theme_btn, 1, 1)
-        grid.addWidget(self.main.shortcut_btn, 1, 2)
-        grid.addWidget(self.main.page_label, 1, 3)
-        grid.addWidget(button_container, 1, 4)
+        grid.addWidget(self.main.page_label, 1, 4)
+        grid.addWidget(button_container, 1, 5)
 
         self.main.setWindowFlags(self.main.windowFlags()
                                  & Qt.CustomizeWindowHint)
 
         # Append widgets to grid
-        grid.addWidget(self.table, 2, 0, 1, 5)
-        grid.addLayout(hbox, 3, 0, 1, 5)
+        grid.addWidget(self.table, 2, 0, 1, 6)
+        grid.addLayout(hbox, 3, 0, 1, 6)
         widget.setLayout(grid)
         self.main.resize(720, 450)
         # Set size policies for the table

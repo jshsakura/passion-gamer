@@ -21,7 +21,7 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer2.png?raw=true"></img>
 </p>
 
-- `설정`의 버튼을 눌러 설정 팝업을 띄우고 `폴더 선택` 버튼을 눌러 롬 파일 경로를 지정하고 `저장`을 눌러줍니다.
+- `설정`의 버튼을 눌러 설정 팝업을 띄우고 `폴더 선택` 버튼을 눌러 롬 폴더 경로를 지정하고 `저장`을 눌러줍니다.
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer3.png?raw=true"></img>
@@ -47,7 +47,8 @@
 </p>
 
 - 만약 조회된 목록에서 롬 파일 명을 확인하고 누락된 건이 있다면 입력해줍니다.
-- 사전 입력된 한글 롬파일 목록은 무적풍화륜 소통카페의 `삼색이냥`님이 고생해주셨습니다. (너무나 감사합니다.)
+- 사전 입력된 한글 롬파일 목록은 무적풍화륜 소통카페의 `삼색이냥`님이 고생해주셨습니다. 감사합니다.
+- 아케이드 한글 바로가기의 경우 `드드라`님이 고생해주셨습니다. 마찬가지로 감사합니다.
 - 전체 한글 롬 파일명 목록은 [구글 독스](https://docs.google.com/spreadsheets/d/1TCoolDlFeeaH3LgBsC6shHvN7u_Tk5liIAX56BhsfSs/edit?usp=sharing)에서 확인이 가능합니다.
 
 <br/>
@@ -85,9 +86,46 @@
 </p>
 
 - 본 프로그램은 SD 카드의 롬 폴더 내의 파일 명을 실제로 직접 변경하기 때문에, 아무쪼록 백업이 중요하며 사용에 주의가 필요합니다.
+
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer10.png?raw=true"></img>
+</p>
+
 - 한글 목록으로 변환 이후 영문 키보드만 지원하는 덕에 검색이 불가능해지거나 기존 게임의 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 가 동작하지 않기 때문에 직접 사용자가 수정이 필요합니다.
 
 - 네이버 무적풍화륜님의 소통카페 측 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 수정 방법을 참고해 `SF2000`의 SD 카드 안에 `Resource` 폴더의 `xfgle.hgp` 파일을 교체하거나 수정해줘야만 정상적으로 사용이 가능합니다.
+
+- 한글명으로 해당 롬의 파일명을 수정한 경우, 링크 기능은 하단의 `한글 숏컷 설치` 버튼을 누르면 설치가 가능합니다.
+
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer11.png?raw=true"></img>
+</p>
+
+- `한글 숏컷`이 적용되는 롬 파일 항목의 경우 파일명 수정시 직접 `Resources` 폴더의 파일을 수정해야하기 때문에 수정하려는 경우 위와 같은 경고가 나타납니다.
+
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer12.png?raw=true"></img>
+</p>
+
+- 추가로 무작정 파일 교체를 하는 것이 아닌, 롬 폴더에 실제 한글 숏컷을 위한 롬 파일이 존재하는 경우에만 `한글 숏컷`이 적용됩니다.
+
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer13.png?raw=true"></img>
+</p>
+
+- `SF2000`의 SD 카드 내기본 테마를 인디케이터가 포함된 무려 한글 테마로 변경하는 `드드라`님의 커스텀 에픽 느와르 테마입니다.
+
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer14.png?raw=true"></img>
+</p>
+
+- 상단의 `드드라 테마` 버튼을 클릭하면 `SF2000`의 `Resources` 폴더에 파일을 확인하고, 테마 적용에 필요한 44개의 파일이 존재하면 해당 파일들을 덮어 쓰게 됩니다.
+- 혼쾌히 테마를 제공해주신 `드드라`님께 감사드립니다.
 
 <br/>
 
@@ -98,4 +136,5 @@
 - 프로그램의 로딩 오버레이 아이콘은 [loading.io](https://loading.io) 에서 무료 `svg` 아이콘을 이용하고 있습니다.
 - 롬파일의 썸네일 추출을 위해 [tadpole](https://github.com/EricGoldsteinNz/tadpole) 이 수정한 `frogtool.py`을 적용했습니다.
 - 기종별 아이콘은 `Onion OS`의 [Dot-art by Yoshi-kun](https://github.com/OnionUI/Themes) 를 적용했습니다.
+- 테마 설치 기능은 무적풍화륜 소통카페의 [드드라 테마](https://cafe.naver.com/moopung?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D29771102%2526articleid%3D147884%2526commentFocus%3Dtrue) 를 허락 받아 적용했습니다.
 - 친절한 도우미, 그러나 심각하게 멍청한 [ChatGPT](https://chat.openai.com/)의 코드 리팩토링 서포트.

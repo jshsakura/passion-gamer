@@ -55,32 +55,6 @@ def abs_config(path):
     return resolved_path
 
 
-def alert(text):
-    '''
-    Create and show QMessageBox Alert.
-    '''
-    msg = QMessageBox()
-    msg.setIcon(QMessageBox.Warning)
-    msg.setWindowTitle('안내')
-    # 화면 중앙 좌표 계산
-    screen_geo = QApplication.primaryScreen().geometry()
-    screen_center = screen_geo.center()
-
-    # 메시지 박스의 크기를 설정
-    msg_box_width = 300  # 메시지 박스의 너비
-    msg_box_height = 200  # 메시지 박스의 높이
-
-    # 메시지 박스를 화면 중앙으로 이동
-    msg.setGeometry(
-        screen_center.x() - msg_box_width // 2,
-        screen_center.y() - msg_box_height // 2,
-        msg_box_width,
-        msg_box_height
-    )
-    msg.setText(text)
-    msg.exec_()
-
-
 def create_file(f):
     '''
     Create empty file.
@@ -149,6 +123,20 @@ def get_db_game_name(platform_name, origin_filename):
     return {"kr_filename": '', "shortcut_link": ''}
 
 
+def get_db_shortcut_game_name():
+    category = 'gamelists'
+    conn = sqlite3.connect('app/local.db')
+    c = conn.cursor()
+    c.execute(
+        "SELECT kr_filename FROM gamelists WHERE shortcut_link IS NOT NULL AND shortcut_link != ''")
+    # 모든 레코드 가져오기
+    results = c.fetchall()
+    # 연결 종료
+    conn.close()
+    # 결과 반환
+    return [row[0] for row in results] if results else []
+
+
 def set_settings(key, value):
     category = 'settings'
     conn = sqlite3.connect('app/local.db')
@@ -189,3 +177,30 @@ def get_platform_name(file_path):
     last_folder = directories[-1]
 
     return last_folder
+
+
+def alert(text):
+    '''
+    Create and show QMessageBox Alert.
+    '''
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Warning)
+    msg.setWindowTitle('안내')
+    # 화면 중앙 좌표 계산
+    screen_geo = QApplication.primaryScreen().geometry()
+    screen_center = screen_geo.center()
+
+    # 메시지 박스의 크기를 설정
+    msg_box_width = 300  # 메시지 박스의 너비
+    msg_box_height = 200  # 메시지 박스의 높이
+
+    # 메시지 박스를 화면 중앙으로 이동
+    msg.setGeometry(
+        screen_center.x() - msg_box_width // 2,
+        screen_center.y() - msg_box_height // 2,
+        msg_box_width,
+        msg_box_height
+    )
+
+    msg.setText(text)
+    msg.exec_()

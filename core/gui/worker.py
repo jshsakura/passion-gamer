@@ -18,12 +18,13 @@ class RomScannerWorkerSignals(QObject):
 
 
 class RomScannerWorker(QRunnable):
-    def __init__(self, gui_behavior, action='scan', rows=[]):
+    def __init__(self, gui_behavior, action='scan', rows=[], text=''):
         super(RomScannerWorker, self).__init__()
         self.signals = RomScannerWorkerSignals()
         self.gui_behavior = gui_behavior
         self.action = action  # 작업 구분자: 'scan' 또는 'remove'
         self.rows = rows
+        self.text = text
 
     def run(self):
         # 로딩 오버레이
@@ -36,7 +37,7 @@ class RomScannerWorker(QRunnable):
             self.current_roms_list = self.gui_behavior.get_current_page_roms()
             # 롬 목록이 준비되면 메인 스레드에 알리기
             self.signals.romsListReady.emit()
-        if self.action == 'unnecessary':
+        elif self.action == 'unnecessary':
             # 롬 파일 목록 얻기
             self.gui_behavior.page = 1
             self.gui_behavior.get_roms_list(action='unnecessary')
@@ -115,5 +116,4 @@ class RomScannerWorker(QRunnable):
 
             self.signals.renameCompleted.emit()
 
-        # 로딩 창을 숨김
         self.signals.hideLoading.emit()

@@ -1,16 +1,14 @@
 import os
 import logging
-from pathlib import Path
 import shutil
 from .frogtool import zxx_ext
 
-from PyQt5.QtCore import Qt, QThreadPool, QSize
+from PyQt5.QtCore import Qt, QThreadPool, QSize, QTimer
 from PyQt5.QtGui import QColor
 from core.gui.worker import RomScannerWorker
 from .helpers import *
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QStandardItem, QImage, QIcon, QPixmap
-from PyQt5.QtWidgets import QApplication
 
 
 class GuiBehavior:
@@ -26,6 +24,7 @@ class GuiBehavior:
         self.current_roms_list = []  # 현재 페이지의 롬 목록
         self.remove_roms_list = []  # 삭제할 롬 목록
         self.except_roms_list = []  # 삭제할 롬 목록
+        self.msg_box = None
 
     def get_current_page_roms(self):
         # 현재 페이지에 해당하는 롬 목록을 반환
@@ -82,13 +81,54 @@ class GuiBehavior:
             settings.append(1)
         self.settings = settings
 
-    def set_resource_install(self, action):
+    def check_shortcut_files(self):
         # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
+        roms_folder = get_settings('directory')
+        roms_list = []
+        # 검색할 platform_name 값들
+        target_platforms = ['ARCADE', 'FC', 'GB', 'GBA', 'GBC',
+                            'MD', 'SFC']  # 'ARCADE'는 zfb 교체
+        target_file_extension = ['.zfb', '.zfc',
+                                 '.zgb', '.zmd', '.zsf']
+        # 숏컷 대상 파일
+        shortcut_links = get_db_shortcut_game_name()
+
+        if roms_folder:
+            for root, dirs, files in os.walk(roms_folder):
+                for file in files:
+                    rom_path = os.path.normpath(os.path.join(root, file))
+                    file_extension = os.path.splitext(file)[-1].lower()
+                    origin_filename = get_file_name_without_extension(rom_path)
+                    platform_name = get_platform_name(rom_path)
+
+                    if file_extension in target_file_extension and platform_name in target_platforms and origin_filename in shortcut_links:
+                        shortcut_links.remove(origin_filename)
+                        logging.debug(
+                            f'한글 숏컷 대상인 {platform_name} 플랫폼의 [ {origin_filename} ] 을 찾았습니다!')
+
+        # 숏컷 갯수 체크
+        if len(shortcut_links) == 0:
+            return True
+        else:
+            return False
+
+    def set_resource_install(self, action):
+        # 롬 폴더 경로
         roms_folder = get_settings('directory')
         # 검색할 폴더
         target_folder = 'Resources'
         resources_path = None
         custom_resources_files = []
+        # 작업명 설정
+        work_name = '드드라 테마' if action == 'theme' else '한글 숏컷'
+
+        if action == 'shortcut':
+            find_shortcut = self.check_shortcut_files()
+            if not find_shortcut:
+                alert(
+                    f'롬 폴더에 {work_name}을 설정하려면 우선 롬 파일을 한글 파일명으로 수정해야합니다.\n설정하신 파일 경로에서 한글 숏컷에 해당되는 한글 롬 파일명을 검색하지 못했습니다.\n아직 파일명을 변경하지 않았다면 먼저 파일명을 변경해주세요.')
+                return
+
         # 리소스 폴더 검색
         if roms_folder:
             # 리소스 폴더 검색
@@ -160,9 +200,9 @@ class GuiBehavior:
                         logging.debug(f"패치를 위해 {custom_file}를 덮어썼습니다.")
 
         # 5. 최종 작업 결과 알림.
-        work_name = '드드라 테마' if action == 'theme' else '한글 숏컷'
         if change_files > 0 and change_files == target_resources_cnt:
-            alert(f'Resources 폴더 안에 파일을 덮어쓰고, {work_name} 설치 작업이 완료되었습니다.')
+            alert(
+                f'Resources 폴더 안에 파일을 덮어쓰고, {work_name} 설치 작업이 완료되었습니다.')
         elif change_files > 0:
             alert(
                 f'{work_name} 설치를 위해 필요한 총 {target_resources_cnt} 개의 파일 중 {change_files} 개만 검색되었습니다.\n[설정] 버튼을 눌러 선택하신 SD 카드 경로를 확인해주세요.')
@@ -246,8 +286,8 @@ class GuiBehavior:
 
                         roms_list.append({"file_path": rom_path, "platform_name": platform_name, "origin_filename": origin_filename, "shortcut_link": shortcut_link,
                                           "new_filename": new_filename, "status": status, "status_name": status_name, "file_size": file_size, "file_byte_size": file_byte_size, "thumbnail": thumbnail, "platform_icon": platform_icon})
-        else:
-            alert('설정하신 롬 파일 경로가 없습니다.')
+        # else:
+        #     alert('설정하신 롬 폴더 경로가 없습니다.')
 
         self.all_roms_list = roms_list
 
@@ -440,6 +480,12 @@ class GuiBehavior:
         self.all_roms_list = []
         self.current_roms_list = []
 
+        # 롬 폴더 경로 설정 확인
+        roms_folder = get_settings('directory')
+        if not roms_folder:
+            alert('설정하신 롬 폴더 경로가 없습니다.')
+            return
+
         # 스캔 시작 버튼을 누를 때 로딩 오버레이를 표시합니다.
         worker = RomScannerWorker(self, action='scan')
         worker.signals.showLoading.connect(self.gui.show_loading_overlay)
@@ -454,6 +500,12 @@ class GuiBehavior:
         self.all_roms_list = []
         self.current_roms_list = []
 
+        # 롬 폴더 경로 설정 확인
+        roms_folder = get_settings('directory')
+        if not roms_folder:
+            alert('설정하신 롬 폴더 경로가 없습니다.')
+            return
+
         # 스캔 시작 버튼을 누를 때 로딩 오버레이를 표시합니다.
         worker = RomScannerWorker(self, action='unnecessary')
         worker.signals.showLoading.connect(self.gui.show_loading_overlay)
@@ -464,7 +516,8 @@ class GuiBehavior:
     def roms_replace(self):
         # 테이블이 비었는지 확인
         if self.gui.table_model.rowCount() == 0:
-            alert('현재 화면의 수정 목록이 비어 있습니다.\n먼저 설정에서 롬 폴더를 지정하고 롬 파일을 검색해야합니다.')
+            alert(
+                '현재 화면의 수정 목록이 비어 있습니다.\n먼저 설정에서 롬 폴더를 지정하고 롬 파일을 검색해야합니다.')
             return
 
         if not self.confirm_bulk_rename():
@@ -762,3 +815,22 @@ class GuiBehavior:
 
         # 현재 페이지를 다시 그립니다.
         self.populate_table_with_roms()
+
+    # def alert(self, text):
+    #     # 이미 열려 있는 메시지 박스를 닫음
+    #     if self.msg_box:
+    #         self.msg_box.close()
+
+    #     # 새로운 메시지 박스 생성
+    #     self.msg_box = QMessageBox()
+    #     self.msg_box.setIcon(QMessageBox.Information)
+    #     self.msg_box.setWindowTitle('안내')
+    #     self.msg_box.setText(text)
+    #     self.msg_box.setGeometry(
+    #         int(self.gui.main.geometry().center().x() - 150 // 2),
+    #         int(self.gui.main.geometry().center().y() - 100 // 2),
+    #         150,
+    #         100
+    #     )
+
+    #     self.msg_box.exec_()
