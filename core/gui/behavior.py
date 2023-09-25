@@ -119,7 +119,11 @@ class GuiBehavior:
                         status = '2'
 
                     # logging.debug('file_extension: '+str(file_extension))
-                    if '.z' in file_extension and platform_name in target_platforms and ((action == 'unnecessary' and '(CN)' in origin_filename) or action == 'scan'):
+                    if '.z' in file_extension and platform_name in target_platforms:
+                        # 중문롬 검색 조건일때 (CN)이 없다면 패스
+                        if action == 'unnecessary' and '(CN)' not in origin_filename:
+                            continue
+
                         # 썸네일 설정
                         thumbnail = self.get_thumbnail(
                             platform_name, rom_path, True)
@@ -147,7 +151,7 @@ class GuiBehavior:
                             status_name = "제외 됨"
 
                         roms_list.append({"file_path": rom_path, "platform_name": platform_name, "origin_filename": origin_filename,
-                                         "new_filename": new_filename, "status": status, "status_name": status_name, "file_size": file_size, "file_byte_size": file_byte_size, "thumbnail": thumbnail, "platform_icon": platform_icon})
+                                          "new_filename": new_filename, "status": status, "status_name": status_name, "file_size": file_size, "file_byte_size": file_byte_size, "thumbnail": thumbnail, "platform_icon": platform_icon})
         else:
             alert('설정하신 롬 파일 경로가 없습니다.')
 
@@ -155,6 +159,8 @@ class GuiBehavior:
 
     def populate_table_with_roms(self):
         roms_list = self.get_current_page_roms()
+        # 테이블을 비우고 진행
+        self.gui.table_model.removeRows(0, self.gui.table_model.rowCount())
 
         for row, rom in enumerate(roms_list):
             # 행 높이 수정, 아이콘 사이즈 수정
@@ -286,6 +292,8 @@ class GuiBehavior:
         if self.get_total_pages() > 0:
             self.gui.main.page_label.setText(
                 f"페이지 {self.page} / {self.get_total_pages()}")
+
+        self.gui.update_titlebar()
 
     def roms_scan(self):
         # 삭제,제외 대상 초기화
