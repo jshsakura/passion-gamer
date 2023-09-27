@@ -6,7 +6,7 @@
 
 간단하게 윈도우에서 설치 없이 `exe` 파일로 실행이 가능한 `SF2000용 롬 파일명 일괄 수정` 프로그램입니다.
 
-썸네일을 보고 한글명을 입력하거나 사전에 입력된 데이터를 이용해 자동으로 변환이 가능합니다.
+썸네일을 보고 한글명을 입력하거나 사전에 입력된 데이터를 이용해 편리하게 일괄 변환이 가능합니다.
 
 # 🎮 Retro Passion Gamer (패션 게이머)
 
@@ -19,11 +19,12 @@
 - 관련 지식이 전무하지만 `열정` 넘치는 게이머들을 돕기 위한 유틸리티입니다.
 - 개선 사항이나 오류가 있다면 깃허브 상단에 `이슈(issue)`탭을 이용해주세요.
 
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer.png?raw=true"></img>
 </p>
 
-- 먼저 `exe` 파일을 이용해 프로그램을 실행합니다.
+- [Releases](https://github.com/jshsakura/passion-gamer/releases) 에서 `zip` 파일을 다운로드 받아 압축을 풀고 `exe`를 이용해 프로그램을 실행합니다.
 
 <br/>
 <p align="center">
