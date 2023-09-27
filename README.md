@@ -9,6 +9,9 @@
 
 # 🎮 Retro Passion Gamer (패션 게이머)
 
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-sf2000.webp?raw=true"></img>
+</p>
 - Retro Passion Gamer는 가성비 장난감 SF 2000의 기본 `롬 파일명` 변경을 도와주는 용도로 개발되었습니다.
 - 호기심에 기기를 구매했지만 6천개의 영문 목록에서 무엇을 찾아야할지 물음표를 띄우고 계실겁니다.
 - 관련 지식이 전무하지만 `열정` 넘치는 게이머들을 돕기 위한 유틸리티입니다.
