@@ -115,11 +115,12 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer10.png?raw=true"></img>
 </p>
 
-- 한글 목록으로 변환 이후 영문 키보드만 지원하는 덕에 검색이 불가능해지거나 기존 게임의 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 가 동작하지 않기 때문에 직접 사용자가 수정이 필요합니다.
+- 한글 목록으로 변환 이후에는 영문 키보드만 지원하는 덕에 기본 게임 검색이 불가능해지니 참고하세요.
+- 기종 별로 화면에 4개씩 지정된 기본 바로가기인 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 는 `파일명` 수정으로 동작하지 않기 때문에 직접 사용자의 수정이 필요합니다.
 
-- 네이버 무적풍화륜님의 소통카페 측 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 수정 방법을 참고해 `SF2000`의 SD 카드 안에 `Resource` 폴더의 `xfgle.hgp` 파일을 교체하거나 수정해줘야만 정상적으로 사용이 가능합니다.
+- 네이버 `무적풍화륜 소통카페` 측 [숏컷 링크](https://cafe.naver.com/moopung?iframe_url=/ArticleSearchList.nhn%3Fsearch.clubid=29771102%26search.searchdate=all%26search.searchBy=3%26search.query=%BB%EF%BB%F6%C0%CC%B3%C9%26search.defaultValue=1%26search.sortBy=date) 게시물의 수정 방법을 참고해 `SF2000`의 SD 카드 내 `Resource` 폴더의 `xfgle.hgp` 파일을 교체 또는 수정해야만 정상적으로 사용이 가능합니다.
 
-- 한글명으로 해당 롬의 파일명을 수정한 경우, 링크 기능은 하단의 `한글 숏컷 설치` 버튼을 누르면 설치가 가능합니다.
+- 단 별도로 수정하지 않고 프로그램으로 `기본 한글명`으로 일괄변환한 경우, 바로가기 기능을 살리기 위해 하단의 `한글 숏컷 설치` 버튼을 누르면 손쉽게 `xfgle.hgp` 교체가 가능합니다.
 
 <br/>
 <br/>
@@ -127,7 +128,7 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer11.png?raw=true"></img>
 </p>
 
-- `한글 숏컷`이 적용되는 롬 파일 항목의 경우 파일명 수정시 직접 `Resources` 폴더의 파일을 수정해야하기 때문에 수정하려는 경우 위와 같은 경고가 나타납니다.
+- `한글 숏컷`이 적용되는 롬 파일 항목의 경우 파일명 수정시 직접 `Resources` 폴더의 파일을 수정하는 것으로 위와 같은 경고가 나타납니다.
 
 <br/>
 <br/>
@@ -135,7 +136,7 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer12.png?raw=true"></img>
 </p>
 
-- 추가로 무작정 파일 교체를 하는 것이 아닌, 롬 폴더에 실제 한글 숏컷을 위한 롬 파일이 존재하는 경우에만 `한글 숏컷`이 적용됩니다.
+- 추가로 무작정 파일을 덮어 쓰는게 것이 아닌, 롬 폴더에 실제 `숏컷`을 위한 파일명이 모두 `존재하는 경우`에만 `한글 숏컷`이 적용됩니다.
 
 <br/>
 <br/>
@@ -143,7 +144,8 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer13.png?raw=true"></img>
 </p>
 
-- `SF2000`의 SD 카드 내기본 테마를 인디케이터가 포함된 무려 한글 테마로 변경하는 `드드라`님의 커스텀 에픽 느와르 테마입니다.
+- `SF2000`의 SD 카드 내기본 테마를 인디케이터가 포함된 편리한 테마로 변경이 가능합니다.
+- 무려 한글 테마로 `드드라`님이 만드신 일종의 커스텀 에픽 느와르 테마로 설치를 추천합니다.
 
 <br/>
 <br/>
@@ -151,8 +153,8 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer14.png?raw=true"></img>
 </p>
 
-- 상단의 `드드라 테마` 버튼을 클릭하면 `SF2000`의 `Resources` 폴더에 파일을 확인하고, 테마 적용에 필요한 44개의 파일이 존재하면 해당 파일들을 덮어 쓰게 됩니다.
-- 혼쾌히 테마를 제공해주신 `드드라`님께 감사드립니다.
+- 상단의 `드드라 테마` 버튼을 클릭하면 `SF2000`의 `Resources` 폴더에 파일을 확인하고, 테마 적용에 필요한 `44개`의 파일이 존재하면 해당 파일들을 덮어 쓰게 됩니다.
+- 테마를 제작해주신 `드드라`님께 감사드립니다.
 
 <br/>
 <br/>
