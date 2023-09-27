@@ -20,6 +20,7 @@
 - 개선 사항이나 오류가 있다면 깃허브 상단에 `이슈(issue)`탭을 이용해주세요.
 
 <br/>
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer.png?raw=true"></img>
 </p>
@@ -27,17 +28,22 @@
 - [Releases](https://github.com/jshsakura/passion-gamer/releases) 에서 `zip` 파일을 다운로드 받아 압축을 풀고 `exe`를 이용해 프로그램을 실행합니다.
 
 <br/>
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer2.png?raw=true"></img>
 </p>
 
 - `설정`의 버튼을 눌러 설정 팝업을 띄우고 `폴더 선택` 버튼을 눌러 롬 폴더 경로를 지정하고 `저장`을 눌러줍니다.
+
+<br/>
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer3.png?raw=true"></img>
 </p>
 
 - 아래의 `롬 파일 검색` 버튼을 누르면 전체 롬 파일의 검색이 시작되니 잠시 기다려줍니다.
+
+<br/>
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer3-1.png?raw=true"></img>
@@ -52,6 +58,7 @@
 - 추가로 중문판 중국 롬의 경우 불필요한 파일이나 마찬가지기 때문에 `중국 롬 검색` 버튼을 눌러 파일명의 `(CN)` 을 기준으로 단순 검색 후 삭제가 가능합니다.
 
 <br/>
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer4.png?raw=true"></img>
 </p>
@@ -62,12 +69,14 @@
 - 전체 한글 롬 파일명 목록은 [구글 독스](https://docs.google.com/spreadsheets/d/1TCoolDlFeeaH3LgBsC6shHvN7u_Tk5liIAX56BhsfSs/edit?usp=sharing)에서 확인이 가능합니다.
 
 <br/>
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer5.png?raw=true"></img>
 </p>
 
 - 수정 작업이 끝나면 우측 하단의 `수정사항 적용` 버튼을 누르고 파일명 변경 작업이 끝날때까지 잠시 기다려줍니다.
 
+<br/>
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer6.png?raw=true"></img>
@@ -76,12 +85,14 @@
 - 작업이 모두 완료되면 안내창이 나타나며, `확인` 버튼을 누르면 롬 목록을 새로고칩니다.
 
 <br/>
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer7.png?raw=true"></img>
 </p>
 
 - 정상적으로 사전입력된 DB 데이터와 동일하거나, 원본명과 수정 파일명이 동일하다면 `수정완료`로 `녹색`으로 표시됩니다.
 
+<br/>
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer8.png?raw=true"></img>
@@ -91,12 +102,14 @@
 - 현재 개발 시점인 `23년 9월 18일` 기준으로 누락 건은 없었습니다.
 
 <br/>
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer9.png?raw=true"></img>
 </p>
 
 - 본 프로그램은 SD 카드의 롬 폴더 내의 파일 명을 실제로 직접 변경하기 때문에, 아무쪼록 백업이 중요하며 사용에 주의가 필요합니다.
 
+<br/>
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer10.png?raw=true"></img>
@@ -109,12 +122,14 @@
 - 한글명으로 해당 롬의 파일명을 수정한 경우, 링크 기능은 하단의 `한글 숏컷 설치` 버튼을 누르면 설치가 가능합니다.
 
 <br/>
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer11.png?raw=true"></img>
 </p>
 
 - `한글 숏컷`이 적용되는 롬 파일 항목의 경우 파일명 수정시 직접 `Resources` 폴더의 파일을 수정해야하기 때문에 수정하려는 경우 위와 같은 경고가 나타납니다.
 
+<br/>
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer12.png?raw=true"></img>
@@ -123,12 +138,14 @@
 - 추가로 무작정 파일 교체를 하는 것이 아닌, 롬 폴더에 실제 한글 숏컷을 위한 롬 파일이 존재하는 경우에만 `한글 숏컷`이 적용됩니다.
 
 <br/>
+<br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer13.png?raw=true"></img>
 </p>
 
 - `SF2000`의 SD 카드 내기본 테마를 인디케이터가 포함된 무려 한글 테마로 변경하는 `드드라`님의 커스텀 에픽 느와르 테마입니다.
 
+<br/>
 <br/>
 <p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer14.png?raw=true"></img>
@@ -137,6 +154,7 @@
 - 상단의 `드드라 테마` 버튼을 클릭하면 `SF2000`의 `Resources` 폴더에 파일을 확인하고, 테마 적용에 필요한 44개의 파일이 존재하면 해당 파일들을 덮어 쓰게 됩니다.
 - 혼쾌히 테마를 제공해주신 `드드라`님께 감사드립니다.
 
+<br/>
 <br/>
 
 ## 💌 무한한 감사를 드립니다. 🫶
