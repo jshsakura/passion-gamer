@@ -1,14 +1,14 @@
 import os
 import logging
 import shutil
-from .frogtool import zxx_ext
+from .frogtool import zxx_ext, StopExecution, process_sys, systems
 
 from PyQt5.QtCore import Qt, QThreadPool, QSize, QTimer
 from PyQt5.QtGui import QColor
 from core.gui.worker import RomScannerWorker
 from .helpers import *
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QStandardItem, QImage, QIcon, QPixmap
+from PyQt5.QtGui import QStandardItem, QImage, QIcon, QPixmap, QFont
 
 
 class GuiBehavior:
@@ -20,7 +20,7 @@ class GuiBehavior:
         self.settings = None
         self.all_roms_list = []
         self.page = 1  # 현재 페이지 번호
-        self.page_size = 500  # 한 페이지에 표시할 아이템 수
+        self.page_size = 1000  # 한 페이지에 표시할 아이템 수
         self.current_roms_list = []  # 현재 페이지의 롬 목록
         self.remove_roms_list = []  # 삭제할 롬 목록
         self.except_roms_list = []  # 삭제할 롬 목록
@@ -30,6 +30,7 @@ class GuiBehavior:
         # 현재 페이지에 해당하는 롬 목록을 반환
         start_idx = (self.page - 1) * self.page_size
         end_idx = start_idx + self.page_size
+
         return self.all_roms_list[start_idx:end_idx]
 
     def next_page(self):
@@ -37,7 +38,7 @@ class GuiBehavior:
         worker = RomScannerWorker(self, action='next')
         worker.signals.showLoading.connect(self.gui.show_loading_overlay)
         worker.signals.hideLoading.connect(self.gui.hide_loading_overlay)
-        worker.signals.changePage.connect(self.populate_table_with_roms)
+        worker.signals.changePage.connect(self.change_page_refresh)
         self.worker_thread.start(worker)
 
     def prev_page(self):
@@ -45,7 +46,7 @@ class GuiBehavior:
         worker = RomScannerWorker(self, action='prev')
         worker.signals.showLoading.connect(self.gui.show_loading_overlay)
         worker.signals.hideLoading.connect(self.gui.hide_loading_overlay)
-        worker.signals.changePage.connect(self.populate_table_with_roms)
+        worker.signals.changePage.connect(self.change_page_refresh)
         self.worker_thread.start(worker)
 
     def get_total_pages(self):
@@ -167,7 +168,7 @@ class GuiBehavior:
             # 수정 대상 파일
             target_resources_cnt = 0
             if action == 'theme':
-                target_resources_cnt = 44
+                target_resources_cnt = 46
             elif action == 'shortcut':
                 target_resources_cnt = 1
 
@@ -285,18 +286,119 @@ class GuiBehavior:
                             status_name = "제외 됨"
 
                         roms_list.append({"file_path": rom_path, "platform_name": platform_name, "origin_filename": origin_filename, "shortcut_link": shortcut_link,
-                                          "new_filename": new_filename, "status": status, "status_name": status_name, "file_size": file_size, "file_byte_size": file_byte_size, "thumbnail": thumbnail, "platform_icon": platform_icon})
+                                          "kr_filename": new_filename, "new_filename": new_filename, "status": status, "status_name": status_name, "file_size": file_size, "file_byte_size": file_byte_size, "thumbnail": thumbnail, "platform_icon": platform_icon})
         # else:
         #     alert('설정하신 롬 폴더 경로가 없습니다.')
 
         self.all_roms_list = roms_list
+
+    # def get_roms_list(self, action):
+    #     # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
+    #     roms_folder = get_settings('directory')
+    #     roms_list = []
+    #     # 검색할 platform_name 값들
+    #     target_platforms = ['ARCADE', 'FC', 'GB', 'GBA', 'GBC', 'MD', 'SFC']
+    #     target_file_extension = ['.zfb', '.zfc', '.zgb', '.zmd', '.zsf']
+
+    #     if roms_folder:
+    #         for root, dirs, files in os.walk(roms_folder):
+    #             for file in files:
+    #                 rom_path = os.path.normpath(os.path.join(root, file))
+    #                 file_extension = os.path.splitext(file)[-1].lower()
+    #                 origin_filename = get_file_name_without_extension(rom_path)
+    #                 platform_name = get_platform_name(rom_path)
+    #                 new_filename = ''
+    #                 shortcut_link = ''
+
+    #                 if file_extension in target_file_extension and platform_name in target_platforms:
+
+    #                     status = '0'  # 사용자 입력
+
+    #                     # 중문롬 검색 조건일때 (CN)이 없다면 패스
+    #                     if action == 'unnecessary' and '(CN)' not in origin_filename:
+    #                         continue
+
+    #                     # 썸네일 설정
+    #                     thumbnail = self.get_thumbnail(
+    #                         platform_name, rom_path, True)
+
+    #                     # 콘솔 아이콘 설정
+    #                     platform_icon = self.get_platform_icon(platform_name)
+
+    #                     # 원본 파일명 설정
+    #                     file_size = self.get_filesize(
+    #                         os.path.getsize(rom_path))
+
+    #                     file_byte_size = os.path.getsize(rom_path)
+
+    #                     roms_list.append({"file_path": rom_path, "platform_name": platform_name, "origin_filename": origin_filename, "shortcut_link": shortcut_link,
+    #                                       "kr_filename": new_filename, "new_filename": new_filename, "status": "0", "platform_icon": platform_icon, "thumbnail": thumbnail, "file_byte_size": file_byte_size, "file_size": file_size, "status_name": "파일명 누락"})
+
+    #         # 한 번에 모든 게임의 정보를 DB에서 가져옵니다.
+    #         db_results = get_all_db_game_names(target_platforms)
+
+    #         # 가져온 정보를 roms_list에 업데이트합니다.
+    #         for rom_info in roms_list:
+    #             platform_name = rom_info["platform_name"]
+    #             origin_filename = rom_info["origin_filename"]
+    #             db_result = db_results.get((platform_name, origin_filename))
+    #             if not db_result:
+    #                 db_results.get((platform_name, new_filename))
+
+    #                 print(db_results.get((platform_name, origin_filename)))
+    #                 print(db_results.get((platform_name, new_filename)))
+    #             if db_result:
+    #                 new_filename = db_result["kr_filename"]
+    #                 # 수정전 원본명 분리
+    #                 rom_info["new_filename"] = new_filename
+    #                 rom_info["kr_filename"] = new_filename
+    #                 rom_info["shortcut_link"] = db_result["shortcut_link"]
+    #                 status = '0'
+
+    #                 # status = '1' # DB 일치
+    #                 # status = '2' # 수정 대기
+    #                 # status = '4' # 삭제 대기
+    #                 # status = '5' # 제외 됨
+    #                 if not new_filename:
+    #                     status = '0'
+    #                 elif origin_filename != new_filename and new_filename:
+    #                     status = '1'
+    #                 elif origin_filename == new_filename:
+    #                     status = '3'
+    #                 else:
+    #                     status = '2'
+
+    #                 if status == '0':
+    #                     status_name = "파일명 누락"
+    #                 elif status == '1':
+    #                     status_name = "DB 존재"
+    #                 elif status == '2':
+    #                     status_name = "수정 대기"
+    #                 elif status == '3':
+    #                     status_name = "수정 완료"
+    #                 elif status == '4':
+    #                     status_name = "삭제 대기"
+    #                 elif status == '5':
+    #                     status_name = "제외 됨"
+
+    #                 # 상태 업데이트
+    #                 rom_info["status"] = status
+    #                 rom_info["status_name"] = status_name
+
+    #     self.all_roms_list = roms_list
+
+    def change_page_refresh(self):
+        self.populate_table_with_roms()
+
+        # 스크롤바 초기화
+        self.gui.table.verticalScrollBar().setValue(0)
 
     def populate_table_with_roms(self):
         roms_list = self.get_current_page_roms()
         # 테이블을 비우고 진행
         self.gui.table_model.removeRows(0, self.gui.table_model.rowCount())
 
-        italic_font = self.gui.font
+        italic_font = QFont(self.gui.font)
         italic_font.setItalic(True)
 
         for row, rom in enumerate(roms_list):
@@ -306,7 +408,7 @@ class GuiBehavior:
 
             # logging.debug(rom)
             platform_name = rom['platform_name']
-            platform_icon = rom['platform_icon']
+            platform_icon = rom.get('platform_icon', None)
             file_path = rom['file_path']
             thumbnail = rom['thumbnail']
             file_size = rom['file_size']
@@ -314,6 +416,7 @@ class GuiBehavior:
             shortcut_link = rom['shortcut_link']
 
             status_name = rom['status_name']
+
             if file_path in self.remove_roms_list:
                 status = '4'
             elif file_path in self.except_roms_list:
@@ -321,6 +424,7 @@ class GuiBehavior:
 
             origin_filename = rom['origin_filename']
             new_filename = rom['new_filename']
+            kr_filename = rom['kr_filename']
 
             # 플랫폼 아이콘 설정
             if platform_icon:
@@ -379,14 +483,15 @@ class GuiBehavior:
             status_name_item = QStandardItem(status_name)
 
             if status == '0':  # 입력 필요
-                status_name_item.setForeground(QColor(255, 51, 51))  # 폰트 색상 설정
+                status_name_item.setForeground(
+                    QColor(255, 102, 102))  # 폰트 색상 설정
             elif status == '1':  # DB 일치
                 status_name_item.setForeground(
                     QColor(128, 128, 128))  # 폰트 색상 설정
             elif status == '2':  # 수정 대기
                 status_name_item.setForeground(QColor(0, 204, 153))  # 폰트 색상 설정
             elif status == '4':
-                status_name_item.setForeground(QColor(255, 51, 51))  # 삭제 대기
+                status_name_item.setForeground(QColor(255, 102, 102))  # 삭제 대기
                 status_name_item.setText('삭제 대기')
             elif status == '5':
                 status_name_item.setForeground(QColor(255, 153, 0))  # 목록 제외
@@ -411,9 +516,19 @@ class GuiBehavior:
             ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
             self.gui.table_model.setItem(row, 7, origin_filename_item)
 
+            # 원본 DB KR 파일명 설정 (수정여부 판단)
+            kr_filename_item = QStandardItem(kr_filename)
+            kr_filename_item.setFlags(origin_filename_item.flags(
+            ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            # kr_filename_item.setFont(bold_font)
+            # kr_filename_item.setForeground(QColor(0, 0, 0))
+            # kr_filename_item.setBackground(QColor(230, 255, 242))
+            self.gui.table_model.setItem(row, 8, kr_filename_item)
+            # self.gui.table.setColumnHidden(8, True)
+
             # 변경될 파일명 설정
             new_filename_item = QStandardItem(new_filename)
-            self.gui.table_model.setItem(row, 8, new_filename_item)
+            self.gui.table_model.setItem(row, 9, new_filename_item)
             if platform_name == 'ARCADE':
                 new_filename_item.setFlags(origin_filename_item.flags(
                 ) & ~Qt.ItemIsEditable | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
@@ -423,15 +538,31 @@ class GuiBehavior:
             elif shortcut_link:
                 new_filename_item.setForeground(QColor(255, 128, 0))
                 new_filename_item.setFont(italic_font)
+            elif origin_filename == new_filename:
+                new_filename_item.setForeground(QColor(0, 204, 153))
+            else:
+                new_filename_item.setForeground(QColor(51, 173, 255))
 
             # 행 높이 수정, 아이콘 사이즈 수정
             self.gui.table.setRowHeight(row, 58)
             self.gui.table.setIconSize(QSize(50, 58))
 
         # 페이지 정보 업데이트 (예: "페이지 1 / 3")
+        max_page = self.get_total_pages()
         if self.get_total_pages() > 0:
             self.gui.main.page_label.setText(
-                f"페이지 {self.page} / {self.get_total_pages()}")
+                f"페이지 {self.page} / {max_page}")
+
+        # 페이지 버튼 활성 비활성
+        if self.page == 1:
+            self.gui.main.page_prev_btn.setDisabled(True)
+            self.gui.main.page_next_btn.setDisabled(False)
+        elif self.page == max_page:
+            self.gui.main.page_prev_btn.setDisabled(False)
+            self.gui.main.page_next_btn.setDisabled(True)
+        else:
+            self.gui.main.page_prev_btn.setDisabled(False)
+            self.gui.main.page_next_btn.setDisabled(False)
 
         self.gui.update_titlebar()
 
@@ -531,11 +662,11 @@ class GuiBehavior:
         self.worker_thread.start(worker)
 
     def show_rename_completed_alert(self):
-        alert('롬 파일의 이름이 모두 변경되었습니다.\n목록을 새로 고칩니다.')
+        alert('롬 파일의 수정사항이 모두 반영되었습니다.\n목록을 새로 고칩니다.')
         self.roms_scan()
 
     def confirm_change_theme(self):
-        message = "드드라님이 제작한 EpicNoir 한글 테마로 파일을 교체합니다.\n정말 적용하시겠습니까?"
+        message = "[드드라]님이 제작하신 드드라 테마(EpicNoir)로 교체하고,\n[듀얼코어]님이 수정하신 한글 메뉴 리소스를 함께 적용합니다.\n이 작업은 Resources 폴더의 파일을 변경합니다.\n정말 적용하시겠습니까?\n\n출처: 무적풍화륜 소통카페"
         reply = QMessageBox.question(None, '테마 적용을 위한 Resources 폴더 내 파일 변경', message,
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         return reply == QMessageBox.Yes
@@ -635,7 +766,7 @@ class GuiBehavior:
 
                 if column == 5:
                     new_text = "삭제 대기" if action == 'remove' else '제외 됨'
-                    font_color = QColor(255, 51, 51) if action == 'remove' else QColor(
+                    font_color = QColor(255, 102, 102) if action == 'remove' else QColor(
                         255, 153, 0)
                     status_code = '4' if action == 'remove' else '5'
                     item.setText(new_text)
@@ -815,22 +946,3 @@ class GuiBehavior:
 
         # 현재 페이지를 다시 그립니다.
         self.populate_table_with_roms()
-
-    # def alert(self, text):
-    #     # 이미 열려 있는 메시지 박스를 닫음
-    #     if self.msg_box:
-    #         self.msg_box.close()
-
-    #     # 새로운 메시지 박스 생성
-    #     self.msg_box = QMessageBox()
-    #     self.msg_box.setIcon(QMessageBox.Information)
-    #     self.msg_box.setWindowTitle('안내')
-    #     self.msg_box.setText(text)
-    #     self.msg_box.setGeometry(
-    #         int(self.gui.main.geometry().center().x() - 150 // 2),
-    #         int(self.gui.main.geometry().center().y() - 100 // 2),
-    #         150,
-    #         100
-    #     )
-
-    #     self.msg_box.exec_()

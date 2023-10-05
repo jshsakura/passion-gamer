@@ -1,6 +1,7 @@
 import logging
 import math
 import os
+import re
 import sqlite3
 import sys
 import logging
@@ -110,6 +111,32 @@ def get_settings(key):
     return None
 
 
+# DB에서 모든 게임의 정보를 가져오는 함수
+def get_all_db_game_names(platforms):
+    conn = sqlite3.connect('app/local.db')
+    cursor = conn.cursor()
+    db_results = {}
+
+    for platform in platforms:
+        print(
+            f"SELECT origin_filename,kr_filename, shortcut_link, platform_name FROM gamelists WHERE platform_name = '{platform}'")
+        cursor.execute(
+            f"SELECT origin_filename,kr_filename, shortcut_link, platform_name FROM gamelists WHERE platform_name = '{platform}'")
+        results = cursor.fetchall()
+
+        for result in results:
+            # 오리지널 명칭 조회
+            db_results[(platform, result[0])] = {"origin_filename": result[0],
+                                                 "kr_filename": result[1], "shortcut_link": result[2], "platform_name": result[3]}
+            # 한글로 변환된 명칭 조회
+            db_results[(platform, result[1])] = {"origin_filename": result[1],
+                                                 "kr_filename": result[1], "shortcut_link": result[2], "platform_name": result[3]}
+
+    conn.close()
+
+    return db_results
+
+
 def get_db_game_name(platform_name, origin_filename):
     category = 'gamelists'
     conn = sqlite3.connect('app/local.db')
@@ -204,3 +231,31 @@ def alert(text):
 
     msg.setText(text)
     msg.exec_()
+
+
+def replace_shortcut_link(origin_name, modify_name):
+    shortcut_file_path = os.path.normpath(
+        absp(f'res/data/Resources/xfgle.hgp'))
+
+    # 파일을 열어 읽기 모드로 가져옵니다.
+    with open(shortcut_file_path, 'r') as file:
+        text = file.readlines()
+
+    # 파일을 다시 열어 쓰기 모드로 가져옵니다.
+    with open(shortcut_file_path, 'w') as file:
+        for line in text:
+            # 정규식 패턴을 사용하여 중간 문구를 추출합니다.
+            pattern = r"(\d+)\s+(.+)\..+$"
+            match = re.match(pattern, line)
+            if match:
+                prefix, middle_text, extension = match.groups()
+
+                # 파일명이 수정되었다면 중간 문구를 수정합니다.
+                if origin_name != modify_name and origin_name == middle_text:
+                    modified_line = f'{prefix} {modify_name}.{extension}\n'
+                else:
+                    modified_line = line
+                file.write(modified_line)
+            else:
+                # 정규식과 일치하지 않는 라인은 그대로 유지합니다.
+                file.write(line)

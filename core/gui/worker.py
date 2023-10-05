@@ -2,8 +2,8 @@ import logging
 import os
 import shutil
 from PyQt5.QtCore import QRunnable, pyqtSignal, QObject
-
-from core.gui.helpers import get_platform_name, absp
+from .frogtool import StopExecution, process_sys, systems
+from core.gui.helpers import get_platform_name, absp, get_settings, replace_shortcut_link
 
 
 class RomScannerWorkerSignals(QObject):
@@ -73,37 +73,48 @@ class RomScannerWorker(QRunnable):
             roms_list = self.gui_behavior.all_roms_list
 
             for rom in roms_list:
+                # 파일 경로
+                origin_filename = rom['origin_filename']
+                new_filename = rom['new_filename']
+                file_path = rom['file_path']
+                platform_name = get_platform_name(file_path)
                 # 원본 파일명과 변경될 파일명을 비교
-                if rom['origin_filename'] != rom['new_filename'] and rom['new_filename']:
-                    if get_platform_name(rom['file_path']) == 'ARCADE':
+                if origin_filename != new_filename and new_filename:
+                    shortcut_link = rom['shortcut_link']
+                    if platform_name == 'ARCADE':
                         # ARCADE 게임 경로
-                        arcade_file_path = rom['file_path']
-                        directory, filename = os.path.split(arcade_file_path)
+                        directory, filename = os.path.split(file_path)
 
                         # 새 파일 경로
-                        local_file_path = absp(
-                            f"res/data/zfb/{rom['new_filename']}.zfb")
-                        # 파일명 변경
-                        new_file_path = os.path.normpath(os.path.join(
-                            directory, rom['new_filename']+'.zfb'))
-                        if not os.path.exists(new_file_path):
-                            # ARCADE 경로의 파일을 삭제
-                            if os.path.exists(arcade_file_path):
-                                # ARCADE 경로의 파일을 새 파일명으로 이동
-                                shutil.copy(local_file_path, new_file_path)
-                                # 불필요한 원본파일은 삭제
-                                os.remove(arcade_file_path)
+                        local_file_path = os.path.normpath(absp(
+                            f"res/data/zfb/{new_filename}.zfb"))
+                        if os.path.exists(local_file_path):
+                            # 파일명 변경
+                            new_file_path = os.path.normpath(os.path.join(
+                                directory, new_filename+'.zfb'))
+                            if not os.path.exists(new_file_path):
+                                # ARCADE 경로의 파일을 삭제
+                                if os.path.exists(file_path):
+                                    # ARCADE 경로의 파일을 새 파일명으로 이동
+                                    shutil.copy(local_file_path, new_file_path)
+                                    # 불필요한 원본파일은 삭제
+                                    os.remove(file_path)
+                        else:
+                            logging.debug(f'존재하지 않는 파일: {local_file_path}')
 
                     else:
-                        # 단순 파일명 변경
-                        old_path = rom['file_path']
                         directory, old_filename_with_ext = os.path.split(
-                            old_path)
-                        new_filename_with_ext = str(rom['new_filename']).replace('\n', '') + \
+                            file_path)
+                        new_filename_with_ext = str(new_filename).replace('\n', '') + \
                             os.path.splitext(old_filename_with_ext)[-1]
                         new_path = os.path.join(
                             directory, new_filename_with_ext)
-                        os.rename(old_path, new_path)
+                        os.rename(file_path, new_path)
+
+                        # 만약 숏컷 링크dml 수정이라면 링크도 수정한다.
+                        # if shortcut_link and origin_filename and new_filename:
+                        #     replace_shortcut_link(
+                        #         origin_filename, new_filename)
 
             # 롬 파일 목록 얻기
             remove_roms_list = self.gui_behavior.remove_roms_list
@@ -113,6 +124,15 @@ class RomScannerWorker(QRunnable):
                     logging.debug(f"{file_path} 파일이 삭제되었습니다.")
                 except OSError as e:
                     logging.debug(f"{file_path} 파일을 삭제하는 중 오류 발생: {e}")
+
+            # 실제 목록에 적용
+            try:
+                drive = get_settings('directory')
+                for console in systems.keys():
+                    result = process_sys(drive, console, False)
+                    # print("FrogTool 작업결과: " + result)
+            except StopExecution:
+                pass
 
             self.signals.renameCompleted.emit()
 

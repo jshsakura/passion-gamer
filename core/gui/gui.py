@@ -10,7 +10,7 @@ import platform
 from .behavior import GuiBehavior
 from PyQt5.QtCore import Qt, QObject, QEvent
 from PyQt5.QtSvg import QSvgWidget
-from PyQt5.QtGui import QIcon, QStandardItemModel, QPixmap, QFontDatabase, QFont, QColor
+from PyQt5.QtGui import QIcon, QStandardItemModel, QPixmap, QFontDatabase, QFont, QColor, QCursor
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QGridLayout, QPushButton,  QWidget,
                              QTableView,  QHBoxLayout, QVBoxLayout, QAbstractItemView, QMenu, QAction,
                              QAbstractScrollArea, QLabel, QLineEdit, QStackedWidget, QMessageBox,
@@ -41,7 +41,7 @@ class Gui:
             logging.debug("Font load failed!")
         else:
             font_families = font_database.applicationFontFamilies(font_id)
-            self.font = QFont(font_families[0], 10)
+            self.font = QFont(font_families[0], 9)
 
         app.setWindowIcon(QIcon(absp('res/icon/ico.ico')))
         app.setStyle('Fusion')
@@ -72,6 +72,7 @@ class Gui:
     def update_titlebar(self):
         count = len(self.actions.all_roms_list)
         title_text = f"{self.app_name} [ 전체 롬 파일 갯수: {count} ]"
+
         self.main.setWindowTitle(title_text)
 
     def main_init(self):
@@ -90,13 +91,17 @@ class Gui:
         self.table = QTableView()
 
         headers = ['', '플랫폼', '썸네일', '파일 경로',
-                   '상태 코드', '상태', '용량', '원본 파일명', '수정 파일명']
+                   '상태 코드', '상태', '용량', '현재 파일명', '한글 파일명 (DB)', '수정 파일명']
         self.table.setSizeAdjustPolicy(
             QAbstractScrollArea.AdjustToContentsOnFirstShow)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
-        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        # 선택 동작 설정 (SelectRows를 사용하여 행 전체를 선택)
+        self.table.setSelectionBehavior(QTableView.SelectRows)
         self.table.setSortingEnabled(True)
+
+        # 마우스 이벤트 처리 함수 연결
+        self.table.entered.connect(self.setCursorToHand)
 
         # 헤더 클릭 이벤트 핸들러 설정
         self.table.horizontalHeader().sectionClicked.connect(self.on_header_clicked)
@@ -105,6 +110,13 @@ class Gui:
         # 테이블 간격 조정
         self.table_model = QStandardItemModel()
         self.table_model.setHorizontalHeaderLabels(headers)
+
+        # 헤더의 폰트 크기 설정
+        header = self.table.horizontalHeader()
+        header_font = self.font
+        header.setFont(header_font)
+        header.setFixedHeight(23)
+        header.setHighlightSections(False)
 
         self.table.setModel(self.table_model)
 
@@ -118,9 +130,10 @@ class Gui:
         self.table.setColumnWidth(2, 46)
         self.table.setColumnWidth(3, 70)
         self.table.setColumnWidth(4, 80)
-        self.table.setColumnWidth(5, 80)
-        self.table.setColumnWidth(6, 80)
+        self.table.setColumnWidth(5, 70)
+        self.table.setColumnWidth(6, 70)
         self.table.setColumnWidth(7, 145)
+        self.table.setColumnWidth(8, 145)
 
         # 파일 경로 컬럼 숨김
         self.table.setColumnHidden(4, True)
@@ -143,7 +156,8 @@ class Gui:
         self.main.settings_btn.clicked.connect(lambda: self.settings.show(
         ) if not self.settings.isVisible() else self.settings.raise_())
         self.main.theme_btn = QPushButton(
-            QIcon(absp('res/icon/smile.svg')), ' 드드라 테마')
+            QIcon(absp('res/icon/smile.svg')), ' 한글 테마 설치')
+
         self.main.shortcut_btn = QPushButton(
             QIcon(absp('res/icon/external-link.svg')), ' 한글 숏컷 설치')
 
@@ -158,14 +172,17 @@ class Gui:
         self.main.edit_btn = QPushButton(
             QIcon(absp('res/icon/check-square.svg')), ' 수정사항 적용')
 
-        self.main.settings_btn.setFont(self.font)
-        self.main.theme_btn.setFont(self.font)
-        self.main.shortcut_btn.setFont(self.font)
-        self.main.refresh_btn.setFont(self.font)
-        self.main.remove_cn_btn.setFont(self.font)
-        self.main.except_btn.setFont(self.font)
-        self.main.remove_btn.setFont(self.font)
-        self.main.edit_btn.setFont(self.font)
+        large_font = QFont(self.font)
+        large_font.setPointSize(10)
+
+        self.main.settings_btn.setFont(large_font)
+        self.main.theme_btn.setFont(large_font)
+        self.main.shortcut_btn.setFont(large_font)
+        self.main.refresh_btn.setFont(large_font)
+        self.main.remove_cn_btn.setFont(large_font)
+        self.main.except_btn.setFont(large_font)
+        self.main.remove_btn.setFont(large_font)
+        self.main.edit_btn.setFont(large_font)
 
         self.main.settings_btn.setStyleSheet("color: #333333;")
         self.main.theme_btn.setStyleSheet("color: #333333;")
@@ -178,7 +195,6 @@ class Gui:
 
         hbox.addWidget(self.main.refresh_btn)
         hbox.addWidget(self.main.remove_cn_btn)
-        hbox.addWidget(self.main.shortcut_btn)
         hbox.addWidget(self.main.except_btn)
         hbox.addWidget(self.main.remove_btn)
         hbox.addWidget(self.main.edit_btn)
@@ -201,6 +217,10 @@ class Gui:
         self.main.page_prev_btn.setStyleSheet("color: #333333;")
         self.main.page_next_btn.setStyleSheet("color: #333333;")
 
+        # 모든 버튼에 대해 커서 설정
+        for button in [self.main.page_prev_btn, self.main.page_next_btn, self.main.settings_btn, self.main.theme_btn, self.main.shortcut_btn, self.main.refresh_btn, self.main.remove_cn_btn, self.main.except_btn, self.main.remove_btn, self.main.edit_btn]:
+            button.setCursor(Qt.PointingHandCursor)
+
         # 페이징 라벨 추가
         self.main.page_label.setAlignment(Qt.AlignCenter)
 
@@ -213,17 +233,18 @@ class Gui:
 
         grid.addWidget(self.main.settings_btn, 1, 0)
         grid.addWidget(self.main.theme_btn, 1, 1)
-        grid.addWidget(self.main.page_label, 1, 4)
-        grid.addWidget(button_container, 1, 5)
+        grid.addWidget(self.main.shortcut_btn, 1, 2)
+        grid.addWidget(self.main.page_label, 1, 3)
+        grid.addWidget(button_container, 1, 4)
 
         self.main.setWindowFlags(self.main.windowFlags()
                                  & Qt.CustomizeWindowHint)
 
         # Append widgets to grid
-        grid.addWidget(self.table, 2, 0, 1, 6)
-        grid.addLayout(hbox, 3, 0, 1, 6)
+        grid.addWidget(self.table, 2, 0, 1, 5)
+        grid.addLayout(hbox, 3, 0, 1, 5)
         widget.setLayout(grid)
-        self.main.resize(720, 450)
+        self.main.resize(850, 514)
         # Set size policies for the table
         self.table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -244,6 +265,13 @@ class Gui:
         # file_menu.addAction(shortcut_action)
 
         self.main.show()
+
+    # 특정 셀 위에 마우스를 올렸을 때 커서 모양 설정
+    def setCursorToHand(self, index):
+        if index.column() == 3 or index.column() == 9:  # 예제에서는 특정 셀(1행 2열)에 대한 설정
+            self.table.setCursor(QCursor(Qt.PointingHandCursor))
+        else:
+            self.table.setCursor(QCursor(Qt.ArrowCursor))
 
     def main_win(self):
         self.main.theme_btn.clicked.connect(self.actions.set_theme)
@@ -286,10 +314,6 @@ class Gui:
             self.main.remove_btn.setEnabled(True)
             self.main.remove_cn_btn.setEnabled(True)
             self.main.edit_btn.setEnabled(True)
-            self.main.page_prev_btn.setEnabled(True)
-            self.main.page_next_btn.setEnabled(True)
-            # 스크롤바 초기화
-            self.table.verticalScrollBar().setValue(0)
 
     def settings_win(self):
         # Define Settings Win
@@ -395,41 +419,49 @@ class Gui:
             status = item.model().item(row, 4).text()
 
             if status == '0':
-                item.model().item(row, 5).setForeground(QColor(255, 51, 51))
+                item.model().item(row, 5).setForeground(QColor(255, 102, 102))
             elif status == '1':
                 item.model().item(row, 5).setForeground(QColor(0, 204, 153))
             elif status == '2':
-                item.model().item(row, 5).setForeground(QColor(0, 204, 153))
+                item.model().item(row, 5).setForeground(QColor(51, 173, 255))
             elif status == '3':
                 item.model().item(row, 5).setForeground(QColor(0, 204, 153))
             elif status == '4':
-                item.model().item(row, 5).setForeground(QColor(255, 51, 51))
+                item.model().item(row, 5).setForeground(QColor(255, 102, 102))
             elif status == '5':
                 item.model().item(row, 5).setForeground(QColor(255, 153, 0))
             else:
-                item.model().item(row, 5).setForeground(QColor(128, 128, 128))
+                item.model().item(row, 5).setForeground(QColor(140, 140, 140))
 
-        elif column == 8:  # 수정된 아이템이 있는 경우
+        elif column == 9:  # 수정된 아이템이 있는 경우
             platform_name = item.model().item(row, 1).text()
             original_filename = item.model().item(row, 7).text()
+            kr_filename = item.model().item(row, 8).text()
             file_path = item.model().item(row, 3).text()
+            status = item.model().item(row, 4).text()
             new_filename = item.text()
             action = 'update'
 
-            if original_filename == new_filename:
+            if status in ['4', '5']:
+                return
+            elif original_filename == new_filename:
                 item.setBackground(QColor(230, 255, 230))  # 이미 매칭된 경우
+                item.model().item(row, 4).setText('3')
+                item.model().item(row, 5).setText('수정 완료')
             elif not new_filename:  # 셀의 값이 비어 있는 경우
                 item.model().item(row, 4).setText('0')
                 item.model().item(row, 5).setText('사용자 입력')
-                item.model().item(row, 5).setForeground(QColor(255, 51, 51))
-                item.setBackground(QColor(255, 179, 179))  # 배경색을 빨간색으로 설정
+                item.model().item(row, 5).setForeground(QColor(255, 102, 102))
+                red_color = QColor(255, 102, 102)
+                red_color.setAlpha(64)
+                item.setBackground(red_color)  # 배경색을 빨간색으로 설정
                 self.actions.update_row_from_all_roms_list(
                     file_path, new_filename, action)
                 # self.actions.populate_table_with_roms()
             else:
                 item.model().item(row, 4).setText('2')
                 item.model().item(row, 5).setText('수정 대기')
-                item.model().item(row, 5).setForeground(QColor(0, 204, 153))
+                item.model().item(row, 5).setForeground(QColor(51, 173, 255))
                 item.setBackground(QColor(255, 255, 255))  # 배경색을 기본으로 설정
                 self.actions.update_row_from_all_roms_list(
                     file_path, new_filename, action)
@@ -446,12 +478,12 @@ class Gui:
     def on_item_double_clicked(self, index):
         row = index.row()
         column = index.column()
-        if column == 8 and self.table_model.item(row, 1).text() == 'ARCADE':
+        if column == 9 and self.table_model.item(row, 1).text() == 'ARCADE':
             alert(
                 '[ARCADE] 플랫폼은 사용자가 직접 파일명을 수정할 수 없습니다.\n롬 폴더에 한글명이 사전 작업 된 바로가기 파일로 대체하는 방식으로 적용됩니다.')
-        elif column == 8 and self.table_model.item(row, column).font().italic():
+        elif column == 9 and self.table_model.item(row, column).font().italic():
             alert(
-                '선택하신 롬은 플랫폼 메인화면에 기본 [숏컷]으로 지정된 게임입니다.\n만약 파일명을 수정하면 설정 파일의 내용을 직접 수정해야하니 주의가 필요합니다!')
+                '선택하신 롬은 플랫폼 메인화면에 기본 [숏컷]으로 지정된 게임입니다.\n만약 파일명을 수정하면 Resources 폴더 내 숏컷도 함께 수정됩니다!')
 
     def open_in_explorer(self, file_path):
         folder_path = os.path.dirname(file_path)  # 파일의 폴더 경로를 얻습니다.
@@ -470,7 +502,7 @@ class Gui:
 
         # column 변수를 어떻게 정의했는지에 따라 정렬합니다.
         column = {1: "platform_name", 3: "file_path", 5: "status_name", 6: "file_byte_size",
-                  7: "origin_filename", 8: "new_filename"}
+                  7: "origin_filename", 9: "new_filename"}
 
         # 정렬 불가능한 열은 볼 것도 없음
         if not logical_index in column:
