@@ -1,12 +1,13 @@
 **🧙‍♂️ Retro Passion Gamer 프로젝트.**
 
-<p align="left">
+<p align="center">
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/core/gui/res/icon/ico.png?raw=true" style="width:100px;"></img>
 </p>
 
-간단하게 윈도우에서 설치 없이 `exe` 파일로 실행이 가능한 `SF2000용 롬 파일명 일괄 수정` 프로그램입니다.
-
-썸네일을 보고 한글명을 입력하거나 사전에 입력된 데이터를 이용해 편리하게 일괄 변환이 가능합니다.
+- 사용자가 간단하게 윈도우에서 설치 없이 `exe` 파일로 실행이 가능한 `SF2000용 롬 파일명 일괄 수정` 프로그램입니다.
+- 게임파일의 썸네일을 보고 한글명을 입력하거나 사전에 입력된 `DB` 데이터를 이용해 편리하게 전체 파일의 일괄 변환이 가능합니다.
+  <br>
+  <br>
 
 # 🎮 Retro Passion Gamer (패션 게이머)
 
@@ -14,7 +15,7 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-sf2000.jpg?raw=true"></img>
 </p>
 
-- Retro Passion Gamer는 가성비 장난감 SF 2000의 기본 `롬 파일명` 변경을 도와주는 용도로 개발되었습니다.
+- `Retro Passion Gamer`는 가성비 장난감 `SF2000`의 기본 `롬 파일명` 변경을 도와주는 용도로 개발되었습니다.
 - 호기심에 기기를 구매했지만 6천개의 영문 목록에서 무엇을 찾아야할지 물음표를 띄우고 계실겁니다.
 - 관련 지식이 전무하지만 `열정` 넘치는 게이머들을 돕기 위한 유틸리티입니다.
 - 개선 사항이나 오류가 있다면 깃허브 상단에 `이슈(issue)`탭을 이용해주세요.
@@ -106,7 +107,7 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer3-1.png?raw=true"></img>
 </p>
 
-- 추가로 중문판 중국 롬의 경우 불필요한 파일이나 마찬가지기 때문에 `중국 롬 검색` 버튼을 눌러 별도로 조회가 가능합니다.
+- 추가로 중문 패치버전(CN) 중국 롬의 경우 불필요한 파일이나 마찬가지기 때문에 `중국 롬 검색` 버튼을 눌러 별도로 조회가 가능합니다.
 
 <br/>
 <br/>
@@ -117,14 +118,6 @@
 - 파일명의 `(CN)` 을 기준으로 단순 검색됩니다.
 - `Ctrl` + `A` 버튼으로 전체 목록을 선택하시고 아래의 (1) `선택항목 삭제`를 눌러줍니다.
 - 다음 확인 창에서 (2) `Yes`를 눌러주시고 `수정사항 적용` 버튼을 누르면 실제로 `SD 카드`에서 제거됩니다.
-
-<br/>
-<br/>
-<p align="center">
-  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer9.png?raw=true"></img>
-</p>
-
-- 본 프로그램은 SD 카드의 롬 폴더 내의 파일 명을 실제로 직접 변경하기 때문에, 아무쪼록 백업이 중요하며 사용에 주의가 필요합니다.
 
 <br/>
 <br/>
@@ -169,6 +162,14 @@
 </p>
 
 - 멋진 테마를 제작해주신 `드드라`님과 게임 내 퀵 메뉴 호출시 등장하는 한국어를 수정해주신 `듀얼코어`님께 감사합니다.
+
+<br/>
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer9.png?raw=true"></img>
+</p>
+
+- 본 프로그램은 `SD 카드`의 롬 폴더 내의 파일 명을 실제로 직접 변경하기 때문에, 아무쪼록 사용전에 항상 `백업`이 중요하며 주의가 필요합니다.
 
 <br/>
 <br/>
