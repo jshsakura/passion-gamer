@@ -211,6 +211,89 @@ class GuiBehavior:
             alert(
                 f'Resources 폴더에 파일을 찾을 수 없어 {work_name} 설치를 진행할 수 없었습니다.\n[설정] 버튼을 눌러 선택하신 SD 카드 경로를 확인해주세요.')
 
+    def set_bios_install(self, action):
+        # 롬 폴더 경로
+        roms_folder = get_settings('directory')
+        # 검색할 폴더
+        target_folder = 'bios'
+        bios_path = None
+        custom_bios_files = []
+        # 작업명 설정
+
+        if action != 'bios_install':
+            logging.debug('올바른 명령이 아닙니다.')
+            return
+
+        # 리소스 폴더 검색
+        if roms_folder:
+            # 리소스 폴더 검색
+            current_folder = roms_folder  # 현재 폴더를 설정된 경로로 초기화
+
+            # 설정된 경로에서 상위 폴더로 이동하며 검색
+            while current_folder:
+                for root, dirs, files in os.walk(current_folder):
+                    if target_folder in os.path.normpath(root):
+                        # bios 폴더를 발견하면 중단!
+                        bios_path = os.path.normpath(root)
+                        break
+
+                # 상위 폴더로 이동 (1단계 상위로 이동)
+                current_folder = os.path.dirname(current_folder)
+
+                # 리소스 폴더를 찾았을 때 중단
+                if bios_path:
+                    break
+
+        change_files = 0
+        # 1. bios_path에 위치한 파일 목록 가져오기
+        if bios_path:
+            logging.debug(f"바이오스를 설치할 폴더를 찾았습니다: {bios_path}")
+            bios_files = os.listdir(bios_path)
+
+            # 2. absp(f'res/data/Resources')에 위치한 파일 목록 가져오기
+            custom_bios_path = os.path.normpath(
+                absp(f'res/data/bios'))
+            custom_bios_files = os.listdir(custom_bios_path)
+
+            # 3. 두 목록을 비교하여 수정전 파일갯수 카운트
+            for custom_file in custom_bios_files:
+                if custom_file in bios_files:
+                    # 한글 숏컷은 제외
+                    change_files = change_files+1
+
+            # 4. 두 목록을 비교하여 동일한 파일 교체
+            if change_files >= 0:
+                # 4. 파일 덮어쓰기 (복사 및 붙여넣기)
+                custom_gba_file_path = os.path.normpath(os.path.join(
+                    custom_bios_path, 'gba_bios.bin'))
+                custom_sfc_fw_file_path = os.path.normpath(os.path.join(
+                    custom_bios_path, 'bisrv.asd'))
+                gba_bios_file = os.path.normpath(os.path.join(
+                    bios_path, 'gba_bios.bin'))
+                sfc_fw_file = os.path.normpath(os.path.join(
+                    bios_path, 'bisrv.asd'))
+
+                shutil.copy2(custom_gba_file_path,
+                             gba_bios_file)
+                shutil.copy2(custom_sfc_fw_file_path,
+                             sfc_fw_file)
+                logging.debug(
+                    f"패치를 위해 {gba_bios_file} 파일과 {sfc_fw_file} 파일을 덮어썼습니다.")
+
+            else:
+                alert(f'bios 폴더 안에 수정할 파일이 존재하지 않습니다.')
+                logging.debug("바이오스를 설치할 파일을 찾을 수 없었습니다.")
+                return
+
+        # 5. 최종 작업 결과 알림.
+        if change_files > 0:
+            alert(
+                f'bios 폴더 안에 필요한 파일을 복사하고 설치 완료했습니다.\n개선 펌웨어 및 바이오스 설치 작업을 모두 완료했습니다.')
+
+        else:
+            alert(
+                f'bios 폴더를 찾을 수 없어 설치를 진행할 수 없었습니다.\n[설정] 버튼을 눌러 선택하신 SD 카드 경로를 확인해주세요.')
+
     def get_roms_list(self, action):
 
         # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
@@ -566,6 +649,25 @@ class GuiBehavior:
 
         self.gui.update_titlebar()
 
+    def set_bios(self):
+        # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
+        roms_folder = get_settings('directory')
+        if not roms_folder:
+            alert(
+                '현재 설정에서 [bios] 폴더를 찾을 수 없습니다.\n먼저 설정 팝업에서 SD 카드 위치를 지정해야합니다.')
+            return
+
+        if not self.confirm_bios_change():
+            return
+
+        # 스캔 시작 버튼을 누를 때 로딩 오버레이를 표시합니다.
+        worker = RomScannerWorker(self, action='bios_install')
+        worker.signals.showLoading.connect(self.gui.show_loading_overlay)
+        worker.signals.hideLoading.connect(self.gui.hide_loading_overlay)
+        worker.signals.resourcesCopy.connect(
+            self.set_bios_install)
+        self.worker_thread.start(worker)
+
     def set_shortcut(self):
         # 롬 폴더 경로 (이미 알고 있는 경로로 설정하세요)
         roms_folder = get_settings('directory')
@@ -668,6 +770,12 @@ class GuiBehavior:
     def confirm_change_theme(self):
         message = "[드드라]님이 제작하신 드드라 테마(EpicNoir)로 교체하고,\n[듀얼코어]님이 수정하신 한글 메뉴 리소스를 함께 적용합니다.\n이 작업은 Resources 폴더의 파일을 변경합니다.\n정말 적용하시겠습니까?\n\n출처: 무적풍화륜 소통카페"
         reply = QMessageBox.question(None, '테마 적용을 위한 Resources 폴더 내 파일 변경', message,
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        return reply == QMessageBox.Yes
+
+    def confirm_bios_change(self):
+        message = "GBA 및 SFC 기종에 적용되는 비공식 펌웨어와 바이오스를 적용합니다.\n바이오스(bios) 폴더 내부의 [ bisrv.asd , gba_bios.bin ] 파일이 변경됩니다.\n이 작업은 돌이킬 수 없으니 항상 백업을 미리 해두세요."
+        reply = QMessageBox.question(None, '[바이오스] 바로가기 경로 수정을 위한 Resources 폴더 내 파일 변경', message,
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         return reply == QMessageBox.Yes
 

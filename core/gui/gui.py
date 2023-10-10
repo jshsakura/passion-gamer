@@ -161,6 +161,9 @@ class Gui:
         self.main.shortcut_btn = QPushButton(
             QIcon(absp('res/icon/external-link.svg')), ' 한글 숏컷 설치')
 
+        self.main.bios_btn = QPushButton(
+            QIcon(absp('res/icon/cpu.svg')), ' 바이오스 설치')
+
         self.main.refresh_btn = QPushButton(
             QIcon(absp('res/icon/refresh-cw.svg')), ' 롬 파일 검색')
         self.main.remove_cn_btn = QPushButton(
@@ -178,6 +181,7 @@ class Gui:
         self.main.settings_btn.setFont(large_font)
         self.main.theme_btn.setFont(large_font)
         self.main.shortcut_btn.setFont(large_font)
+        self.main.bios_btn.setFont(large_font)
         self.main.refresh_btn.setFont(large_font)
         self.main.remove_cn_btn.setFont(large_font)
         self.main.except_btn.setFont(large_font)
@@ -187,6 +191,7 @@ class Gui:
         self.main.settings_btn.setStyleSheet("color: #333333;")
         self.main.theme_btn.setStyleSheet("color: #333333;")
         self.main.shortcut_btn.setStyleSheet("color: #333333;")
+        self.main.bios_btn.setStyleSheet("color: #333333;")
         self.main.refresh_btn.setStyleSheet("color: #333333;")
         self.main.remove_cn_btn.setStyleSheet("color: #333333;")
         self.main.except_btn.setStyleSheet("color: #333333;")
@@ -218,7 +223,7 @@ class Gui:
         self.main.page_next_btn.setStyleSheet("color: #333333;")
 
         # 모든 버튼에 대해 커서 설정
-        for button in [self.main.page_prev_btn, self.main.page_next_btn, self.main.settings_btn, self.main.theme_btn, self.main.shortcut_btn, self.main.refresh_btn, self.main.remove_cn_btn, self.main.except_btn, self.main.remove_btn, self.main.edit_btn]:
+        for button in [self.main.page_prev_btn, self.main.page_next_btn, self.main.settings_btn, self.main.theme_btn, self.main.shortcut_btn, self.main.bios_btn, self.main.refresh_btn, self.main.remove_cn_btn, self.main.except_btn, self.main.remove_btn, self.main.edit_btn]:
             button.setCursor(Qt.PointingHandCursor)
 
         # 페이징 라벨 추가
@@ -234,15 +239,16 @@ class Gui:
         grid.addWidget(self.main.settings_btn, 1, 0)
         grid.addWidget(self.main.theme_btn, 1, 1)
         grid.addWidget(self.main.shortcut_btn, 1, 2)
-        grid.addWidget(self.main.page_label, 1, 3)
-        grid.addWidget(button_container, 1, 4)
+        grid.addWidget(self.main.bios_btn, 1, 3)
+        grid.addWidget(self.main.page_label, 1, 4)
+        grid.addWidget(button_container, 1, 5)
 
         self.main.setWindowFlags(self.main.windowFlags()
                                  & Qt.CustomizeWindowHint)
 
         # Append widgets to grid
-        grid.addWidget(self.table, 2, 0, 1, 5)
-        grid.addLayout(hbox, 3, 0, 1, 5)
+        grid.addWidget(self.table, 2, 0, 1, 6)
+        grid.addLayout(hbox, 3, 0, 1, 6)
         widget.setLayout(grid)
         self.main.resize(850, 514)
         # Set size policies for the table
@@ -276,6 +282,7 @@ class Gui:
     def main_win(self):
         self.main.theme_btn.clicked.connect(self.actions.set_theme)
         self.main.shortcut_btn.clicked.connect(self.actions.set_shortcut)
+        self.main.bios_btn.clicked.connect(self.actions.set_bios)
         self.main.refresh_btn.clicked.connect(self.actions.roms_scan)
         self.main.remove_cn_btn.clicked.connect(self.actions.roms_unnecessary)
         self.main.except_btn.clicked.connect(self.actions.roms_except)
@@ -294,6 +301,7 @@ class Gui:
             self.main.settings_btn.setEnabled(False)
             self.main.theme_btn.setEnabled(False)
             self.main.shortcut_btn.setEnabled(False)
+            self.main.bios_btn.setEnabled(False)
             self.main.refresh_btn.setEnabled(False)
             self.main.except_btn.setEnabled(False)
             self.main.remove_btn.setEnabled(False)
@@ -309,6 +317,7 @@ class Gui:
             self.main.settings_btn.setEnabled(True)
             self.main.theme_btn.setEnabled(True)
             self.main.shortcut_btn.setEnabled(True)
+            self.main.bios_btn.setEnabled(True)
             self.main.refresh_btn.setEnabled(True)
             self.main.except_btn.setEnabled(True)
             self.main.remove_btn.setEnabled(True)

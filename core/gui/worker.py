@@ -68,6 +68,8 @@ class RomScannerWorker(QRunnable):
             self.signals.resourcesCopy.emit('theme')
         elif self.action == 'shortcut_install':
             self.signals.resourcesCopy.emit('shortcut')
+        elif self.action == 'bios_install':
+            self.signals.resourcesCopy.emit('bios_install')
         elif self.action == 'replace':
             # 롬 파일 목록 얻기
             roms_list = self.gui_behavior.all_roms_list
