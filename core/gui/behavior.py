@@ -282,13 +282,12 @@ class GuiBehavior:
 
             else:
                 alert(f'bios 폴더 안에 수정할 파일이 존재하지 않습니다.')
-                logging.debug("바이오스를 설치할 파일을 찾을 수 없었습니다.")
                 return
 
         # 5. 최종 작업 결과 알림.
         if change_files > 0:
             alert(
-                f'bios 폴더 안에 필요한 파일을 복사하고 설치 완료했습니다.\n개선 펌웨어 및 바이오스 설치 작업을 모두 완료했습니다.')
+                f'bios 폴더 안에 파일을 복사하고 설치 완료했습니다.\n개선 펌웨어 및 바이오스 설치가 모두 완료되었습니다.')
 
         else:
             alert(
@@ -774,7 +773,7 @@ class GuiBehavior:
         return reply == QMessageBox.Yes
 
     def confirm_bios_change(self):
-        message = "GBA 및 SFC 기종에 적용되는 비공식 펌웨어와 바이오스를 적용합니다.\n바이오스(bios) 폴더 내부의 [ bisrv.asd , gba_bios.bin ] 파일이 변경됩니다.\n이 작업은 돌이킬 수 없으니 항상 백업을 미리 해두세요."
+        message = "GBA의 성능향상 및 SFC 느려짐 문제를 해결하는 비공식 펌웨어와 바이오스를 설치합니다.\n바이오스(bios) 폴더 내부의 [ bisrv.asd , gba_bios.bin ] 파일이 변경됩니다.\n부팅시 나타나는 커스텀 부트로고를 SF2000 로고로 임시 변경합니다.\n이 작업은 돌이킬 수 없으니 원본 파일을 먼저 백업 해두세요."
         reply = QMessageBox.question(None, '[바이오스] 바로가기 경로 수정을 위한 Resources 폴더 내 파일 변경', message,
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         return reply == QMessageBox.Yes
