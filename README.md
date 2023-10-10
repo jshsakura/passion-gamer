@@ -174,7 +174,11 @@
 - 본 프로그램은 `SD 카드`의 롬 폴더 내의 파일 명을 실제로 직접 변경하기 때문에, 아무쪼록 사용전에 항상 `백업`이 중요하며 주의가 필요합니다.
 
 <br/>
-<br/>
+
+한글화 작업에 대한 좀 더 자세한 후기는 [오픈코스 블로그](https://opencourse.kr/sf2000-korean-passion-gamer/) 에서 만나 보실 수 있습니다.
+<br>
+<br>
+
 
 ## 💌 무한한 감사를 드립니다. 🫶
 
@@ -184,6 +188,7 @@
 - 롬파일의 썸네일 추출을 위해 [tadpole](https://github.com/EricGoldsteinNz/tadpole) 이 수정한 `frogtool.py`을 적용했습니다.
 - 기종별 아이콘은 `Onion OS`의 [Dot-art by Yoshi-kun](https://github.com/OnionUI/Themes) 를 적용했습니다.
 - 테마 설치 기능은 무적풍화륜 소통카페의 [드드라 테마](https://cafe.naver.com/moopung?iframe_url_utf8=%2FArticleRead.nhn%253Fclubid%3D29771102%2526articleid%3D147884%2526commentFocus%3Dtrue) 를 허락 받아 적용했습니다.
+- 인게임 설정 한글화는 무적풍화륜 소통카페의 [듀얼코어](https://m.cafe.naver.com/moopung/187058)님의 허락을 받아 한글 펌웨어 겸 패치 파일에서 추출했습니다.
 - `SF2000`의 수많은 정보를 일일이 정리한 [vonmillhausen](https://github.com/vonmillhausen/sf2000)의 자료들이 큰 도움이 되었습니다.
 - `SF2000`의 구세주와 같은 프로그램인 [EricGoldsteinNz](https://github.com/EricGoldsteinNz/tadpole)의 `tadpole`의 보석같은 소스를 상당부분 차용했습니다.
 - 친절한 도우미, 그러나 심각하게 멍청한 [ChatGPT](https://chat.openai.com/)의 코드 리팩토링 서포트.
