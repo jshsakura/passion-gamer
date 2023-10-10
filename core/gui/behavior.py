@@ -773,8 +773,8 @@ class GuiBehavior:
         return reply == QMessageBox.Yes
 
     def confirm_bios_change(self):
-        message = "GBA의 성능향상 및 SFC 느려짐 문제를 해결하는 비공식 펌웨어와 바이오스를 설치합니다.\n바이오스(bios) 폴더 내부의 [ bisrv.asd , gba_bios.bin ] 파일이 변경됩니다.\n부팅시 나타나는 커스텀 부트로고를 SF2000 로고로 임시 변경합니다.\n이 작업은 돌이킬 수 없으니 원본 파일을 먼저 백업 해두세요."
-        reply = QMessageBox.question(None, '[바이오스] 바로가기 경로 수정을 위한 Resources 폴더 내 파일 변경', message,
+        message = "GBA의 성능 및 SFC 구동 시 느려지는 문제를 해결하는 비공식 펌웨어 및 바이오스를 설치합니다.\n바이오스(bios) 폴더 내부의 [ bisrv.asd , gba_bios.bin ] 파일이 변경됩니다.\n부팅 시 나타나는 커스텀 부트로고는 SF2000 부트로고로 초기화됩니다.\n이 작업은 돌이킬 수 없으니 원본 파일을 먼저 백업 해두세요."
+        reply = QMessageBox.question(None, '[비공식 패치] 적용을 위한 bios 폴더 내 파일 변경', message,
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         return reply == QMessageBox.Yes
 

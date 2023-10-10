@@ -163,7 +163,25 @@
   <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer12.jpg?raw=true"></img>
 </p>
 
-- 멋진 테마를 제작해주신 `드드라`님과 게임 내 퀵 메뉴 호출시 등장하는 한국어를 수정해주신 `듀얼코어`님께 감사합니다.
+- 멋진 테마를 제작해주신 `드드라`님과 게임 내 퀵 메뉴 호출 시 등장하는 한국어 및 열기 이미지를 수정해주신 `듀얼코어`님께 감사합니다.
+
+<br/>
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer15.jpg?raw=true"></img>
+</p>
+
+- `게임보이 어드밴스(GBA)` 구동 성능을 향상하는 바이오스와 `슈퍼 패미컴(SFC)` 의 느린 구동 문제를 해결하는 펌웨어를 설치할 수 있습니다.
+- (1) `비공식 패치 설치` 버튼을 누르고 (2) `Yes` 를 선택하면 `SD 카드`의 `bios` 폴더의 파일을 교체합니다.
+
+<br/>
+<br/>
+<p align="center">
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer16.jpg?raw=true"></img>
+</p>
+
+- 위 파일 교체 작업은 사실상 펌웨어를 재설치 하는 작업과 동일합니다.
+- 반드시 작업 전 기존 `원본 바이오스 폴더`를 `백업`하시고 진행하시길 바랍니다.
 
 <br/>
 <br/>
@@ -178,7 +196,6 @@
 한글화 작업에 대한 좀 더 자세한 후기는 [오픈코스 블로그](https://opencourse.kr/sf2000-korean-passion-gamer/) 에서 만나 보실 수 있습니다.
 <br>
 <br>
-
 
 ## 💌 무한한 감사를 드립니다. 🫶
 
