@@ -162,7 +162,7 @@ class Gui:
             QIcon(absp('res/icon/external-link.svg')), ' 한글 숏컷 설치')
 
         self.main.bios_btn = QPushButton(
-            QIcon(absp('res/icon/cpu.svg')), ' 비공식 패치 설치')
+            QIcon(absp('res/icon/cpu.svg')), ' 1.71 펌웨어 및 바이오스')
 
         self.main.refresh_btn = QPushButton(
             QIcon(absp('res/icon/refresh-cw.svg')), ' 롬 파일 검색')
