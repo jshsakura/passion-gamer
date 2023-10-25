@@ -168,7 +168,7 @@
 <br/>
 <br/>
 <p align="center">
-  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer15.jpg?raw=true"></img>
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer15.png?raw=true"></img>
 </p>
 
 - `게임보이 어드밴스(GBA)` 구동 성능을 향상하는 바이오스와 `슈퍼 패미컴(SFC)` 의 느린 구동 문제를 해결하는 펌웨어를 설치할 수 있습니다.
@@ -177,7 +177,7 @@
 <br/>
 <br/>
 <p align="center">
-  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer16.jpg?raw=true"></img>
+  <img src="https://github.com/jshsakura/passion-gamer/blob/master/screenshots/preview-passion-gamer16.png?raw=true"></img>
 </p>
 
 - 위 파일 교체 작업은 사실상 펌웨어를 재설치 하는 작업과 동일합니다.
